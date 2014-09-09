@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+            <record id="view_res_partner_inherited" model="ir.ui.view">
+  			<field name="name">Name</field>
+  			<field name="model">res.partner</field>
+  			<field name="inherit_id" ref="base.view_partner_form" />
+  			<field name="arch" type="xml">
+    <!-- ============================================================================== -->	
+    			
+    			<xpath expr="//form[@string='Partners']/sheet/div[@class='oe_title']/h1" position="replace" >
+    				<h1>
+                          <field name="name" default_focus="1" placeholder="Name" on_change="on_change_name(is_wakf)"/>
+                    </h1>
+    			</xpath>
+    			
+    			
+    			<xpath expr="//form[@string='Partners']/sheet/notebook" position="after">
+    				<group>
+    					<field name="submitted_by"/>
+    					<field name="date_submitted"/>
+    					<field name="verified_by" attrs="{'invisible':['|',('state1','not in',('verified','approved')),('is_person', '!=', True)]}"/>
+    					<field name="date_verified" attrs="{'invisible':['|',('state1','not in',('verified','approved')),('is_person', '!=', True)]}"/>
+    					<field name="approved_by" attrs="{'invisible':['|',('state1','not in',('approved','sanctioned')),('is_person', '!=', True)]}"/>
+    					<field name="date_approved" attrs="{'invisible':['|',('state1','not in',('approved','sanctioned')),('is_person', '!=', True)]}"/>
+    					<field name="cancelled_by" attrs="{'invisible':['|',('state1','!=','rejected'),('is_person', '!=', True)]}"/>
+    					<field name="date_cancelled" attrs="{'invisible':['|',('state1','!=','rejected'),('is_person', '!=', True)]}"/>
+    					<field name="sanctioned_by" attrs="{'invisible':['|',('state1','!=','sanctioned'),('is_person', '!=', True)]}"/>
+    					<field name="date_sanctioned" attrs="{'invisible':['|',('state1','!=','sanctioned'),('is_person', '!=', True)]}"/>
+    				</group>
+    			</xpath>
+    
+    	  		<xpath expr="//form[@string='Partners']/sheet" position="before">
+    				<header>
+                    	<button name="action_submit" string="Submit" type="object" icon="gtk-go-forward" attrs="{'invisible':['|',('state1','in',('submitted','verified','approved','sanctioned','rejected','re_payment','paid')),('is_person', '!=', True)]}"/>
+                    	<button name="action_verify1" string="Verify" type="object" icon="gtk-go-forward" attrs="{'invisible':['|',('state1','!=','submitted'),('is_person', '!=', True)]}"/>
+                		<button name="action_approve1" string="Approve" type="object" icon="gtk-go-forward" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'verified')]}"/>
+                		<button name="action_sanction" string="Sanction" type="object" icon="gtk-go-forward" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'approved')]}"/>
+                		<button name="action_reject1"  string="Reject" type="object" icon="gtk-goto-last" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'verified'),('state1', '!=', 'approved')]}"/>  
+                		<field name="state1" widget="statusbar" statusbar_visible="submitted,verified,approved,sanctioned,rejected,re_payment,paid" attrs="{'invisible':['|',('is_person', '!=', True),('is_wakf', '=', True)]}"/>
+                    </header>
+                </xpath>
+    		
+    		 	
+    			<xpath expr="//form/sheet/div/div" position="before">
+    				
+                            <label for="is_wakf" string="Is a wakf" context="{'default_wakf': is_wakf}" invisible="1"/>
+                            <field name="is_wakf" invisible="1"/>
+                            <label for="is_person" string="Is a person" context="{'default_person': is_person}" invisible="1"/>
+                            <field name="is_person" invisible="1"/>
+                            
+                            
+    			</xpath>		
+				       
+            	<xpath expr="//form[@string='Partners']/sheet/group" position="inside"> 
+            	 		  	<group></group>
+            				<group></group>
+                            
+                                <group attrs="{'invisible':['|',('is_person', '=', True),('is_wakf', '!=', True)]}">
+                        		 	<field name="wakf_reg_no"/>                    	                     	
+                     				<field name="wakf_registration_date"/>
+                      				<field name="creation_date"/>
+                      				<field name="wakf_objectives"/>
+                      				<field name="suomoto"/>
+                      				<field name="phone"/>
+                      				<field name="wakf_old_name"/>
+                      	
+                    			</group> 
+                    			<group attrs="{'invisible':['|',('is_person', '=', True),('is_wakf', '!=', True)]}"> 
+                        			<field name="type_id"/>
+                      				<field name="classification"/>   	
+                      				<field name="gazetted"/>
+                      				<field name='gazetted_date'/>
+                      	 		 	<field name="comm_addr"/>
+                    			</group>  
+                    			<group attrs="{'invisible':['|',('is_person', '=', True),('is_wakf', '!=', True)]}">
+                    				
+                        		  	<field name="postoffice"/>                   				
+                    				<field name="rule_succession"/>
+                    				
+                    			 </group> 
+                    			 <group attrs="{'invisible':['|',('is_person', '=', True),('is_wakf', '!=', True)]}">
+                    	 		 	 <field name="village_id" on_change="on_change_wakf_village_to_taluk(village_id)"/> 
+                    				 <field name="taluk_id"/>
+                    				 <field name="district_id"/> 
+                    			 </group>
+                    		                 		    
+                 </xpath>
+                 
+                 <xpath expr="//form[@string='Partners']/sheet/group" position="inside">
+                     			<group attrs="{'invisible':['|',('is_wakf', '=', True),('is_person', '!=', True)]}">
+			                        <field name="appli_no" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
+			                        <field name="head" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}" options="{'limit': 15, 'create': false, 'create_edit': false}"  on_change="on_change_category(head)"/>
+			                        
+			                        <field name="category" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}" domain="[('categ_id','=',head)]" options="{'limit': 25, 'create': false, 'create_edit': false}"/>
+			                        <field name="appli_date" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
+			                        <field name="full_name" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
+			                        <field name="address" attrs="{'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
+			                        <field name="tick_same" on_change="on_change_tick_same(tick_same,address)"/>
+			                        <field name="comm_address"/>
+			                        <field name="categ_name" invisible="1"/>
+                        
+                       			</group>
+                       			<group attrs="{'invisible':['|',('is_wakf', '=', True),('is_person', '!=', True)]}">
+			                        <field name="village" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
+			                        <field name="panchayath" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
+			                        <field name="taluk_id" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
+			                        <field name="district_sws_id" attrs="{'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
+			                        <field name="reg_no" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}" on_change="on_change_wakf_regno_to_name(reg_no)"/>
+			                        <field name="wakf_id" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
+			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected'])]}" name="meeting_place"/>
+			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned']),('categ_name','=','Education Loan')],'invisible':[('state1','not in',['verified','approved','sanctioned']),('head','!=','Education Loan')],'readonly':[('state1','in',['approved','sanctioned','rejected'])]}" name="course_end"/>
+			                        
+                       			</group>
+                       			<group  attrs="{'invisible':['|',('is_person', '!=', True),('state1', 'not in',['approved','sanctioned','re_payment','paid'])]}" string="Sanction Details">
+                       				<field attrs="{'required':[('state1','in',['approved','sanctioned'])]}" name="amount_sanction"/>
+                       				<field name="acc_no" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
+                       				<field name="bank" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
+                       				<field name="mo_details" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
+                       				<field name="cheque_no" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
+                       			</group>
+                       			
+                 </xpath>
+                        
+                  <xpath expr="//page[@string='Sales &amp; Purchases']" position="attributes" >
+    					<attribute name="invisible">1</attribute>
+				 </xpath>
+				 
+				 <xpath expr="//page[@string='Accounting']" position="attributes" >
+    					<attribute name="invisible">1</attribute>
+				 </xpath>
+			
+                 <xpath expr="//form[@string='Partners']/sheet/group/group[1]" position="attributes" >
+    					<attribute name="invisible">1</attribute>
+				 </xpath>
+				 <xpath expr="//form[@string='Partners']/sheet/group/group[2]" position="attributes" >
+    					<attribute name="invisible">1</attribute>
+				 </xpath>
+				 
+				 <xpath expr="//form[@string='Partners']/sheet/div[@class='oe_title']/div[@class='oe_edit_only']" position="attributes" >
+    					<attribute name="invisible">1</attribute>
+				 </xpath>
+               
+                    <xpath expr="//notebook/page[@string='Internal Notes']" position="before">                            	                        
+                  <!--    <notebook position="inside">-->
+                     <page string="Immovable Property Details" attrs="{'invisible':['|',('is_person', '=', True),('is_wakf', '!=', True)]}">
+                         <field name="wakf_immovable_property_id"/>                     
+                     </page>
+                     <page string="Movable Property Details" attrs="{'invisible':['|',('is_person', '=', True),('is_wakf', '!=', True)]}">
+                         <field name="wakf_movable_property_id"/>                     
+                     </page>
+                     <page string="Management Details" attrs="{'invisible':['|',('is_person', '=', True),('is_wakf', '!=', True)]}">
+                         <field name="wakf_management_id"/>                     
+                     </page>
+                      
+                     <page string="Pension" attrs="{'invisible':['|',('categ_name', '!=', 'Pension'),('is_wakf', '=', True)],'required':[('categ_name', '=', 'Pension')]}">
+                        		<field name="sws_pension_id" nolabel="1" list_options = '{"limit":1}'>
+                        			<tree string="Pension Details">
+                        				<field name="date_of_birth"/>
+                        				<field name="age"/>
+                        				<field name="qualification"/>
+                        				<field name="in_year"/>
+                        				<field name="in_month"/>
+                        				<field name="in_day"/>
+                        				<field name="total_annual_income"/>		
+                        			</tree>
+                        			<form>
+                        				<sheet>
+                        				<group>
+                        			    <group>
+	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
+	                        				<field name="age"/>
+	                        				<field name="month"/>
+	                        				<field name="days"/>
+	                        				<field name="qualification"/>
+	                        				<field name="job_details"/>
+	                        				<field name="job_income"/>
+	                        				<field name="other_income"/>
+	                        				<field name="total_annual_income"/>
+                        				</group>
+                        				<group>
+	                        				
+	                        				<field name="mahal_details"/>
+	                        				<field name="benefits"/>
+	                        				<field name="body_marks"/>
+                        				</group>
+                        				<group string="Total Experience">
+                        					<field name="in_year"/>
+                        					<field name="in_month"/>
+                        					<field name="in_day"/>                  				
+                        				</group>
+                        				
+                        				</group>
+                        				<notebook colspan="4">
+				                        	<page string="Experience Lines">
+				                        		<field name="exp_line_id" nolabel="1" widget="one2many_list">
+											 	 	<tree string="Experience Lines" editable="bottom">
+											 	 		<field name="partner_id"/>
+											 	 		<field name="reg_no" on_change="on_change_wakf_regno_to_name(reg_no)"/>
+											 	 		<field name="experience_from"/>
+											 	 		<field name="experience_to" on_change="on_change_Work_Exp_from(experience_from,experience_to)"/>
+														<field name="total_year"/>
+														<field name="total_month"/>
+														<field name="total_days"/>
+													</tree>
+												</field>				        	
+											</page>
+										</notebook>
+										</sheet>
+                        			</form>
+                        		</field>
+                        	</page>
+                        	
+                        	<page string="Education" attrs="{'invisible':['|',('categ_name', '!=', 'Education Loan'),('is_wakf', '=', True)]}">
+                        		<field name="sws_education_id" nolabel="1">
+                        			<tree string="Education Details">
+                        				<field name="course_name"/>
+                        				<field name="qualification"/>
+                        				<field name="qualifying_mark"/>
+                        				<field name="qualifying_percentage"/>		
+                        			</tree>
+                        			<form>
+                        			    <group>
+	                        				<field name="course_name" widget="selection"/>
+	                        				<field name="qualification"/>
+	                        				<field name="qualifying_mark"/>
+	                        				<field name="qualifying_percentage"/>
+	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
+	                        				<field name="age"/>
+	                        				
+                        				</group>
+                        				<group>
+	                        				<field name="total_annual_income"/>
+	                        				<field name="institution_name"/>
+	                        				<field name="institution_addr"/>
+                        				</group>
+                        			</form>
+                        		</field>
+                        	</page>
+                        	
+                        	<page string="Orphans" attrs="{'invisible':['|',('categ_name', '!=', 'Orphans'),('is_wakf', '=', True)]}">
+                        		<field name="sws_orphans_id" nolabel="1">
+                        			<tree string="Orphans Details">
+                        				<field name="job_name"/>
+                        				<field name="income"/>
+                        				<field name="date_of_birth"/>
+                        				<field name="age"/>	
+                        				<field name="total_income"/>	
+                        			</tree>
+                        			<form>
+                        			    <group>
+	                        				<field name="job_name"/>
+	                        				<field name="income"/>
+	                        				<field name="other_income"/>
+	                        				<field name="total_income"/>
+	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
+	                           				<field name="age"/>
+	                           				<field name="month"/>
+	                           				<field name="days"/>
+				
+                        				</group>
+                        				<group>
+	                        				<field name="ben_wakf"/>
+	                           				<field name="check_required"/>
+                        				</group>
+                        			</form>
+                        		</field>
+                        	</page>
+                       	
+                        	<page string="Firms" attrs="{'invisible':['|',('categ_name', '!=', 'Firms'),('is_wakf', '=', True)]}">
+                        		<field name="sws_firms_id" nolabel="1">
+                        			<tree string="Firms Details">
+                        				<field name="reg_no" on_change="on_change_wakf_regno_to_name(reg_no)"/>
+                        				<field name="wakf_name"/>
+                        				<field name="name_firm"/>
+                        				<field name="designation"/>		
+                        			</tree>
+                        			<form>
+                        			    <group>
+	                        				<field name="reg_no"/>
+	                        				<field name="wakf_name"/>
+	                        				<field name="name_firm"/>
+	                        				<field name="designation"/>
+	                           				<field name="financial_status"/>
+	                           
+                        				</group>
+                        				<group>
+	                        				<field name="objectives"/>
+	                           				<field name="objectives_fund"/>
+                        				</group>
+                        			</form>
+                        		</field>
+                        	</page>
+                        	
+                        	<page string="Widow" attrs="{'invisible':['|',('categ_name', '!=', 'Widow'),('is_wakf', '=', True)]}">
+                        		<field name="sws_widow_id" nolabel="1">
+                        			<tree string="Widow Details">
+                        				<field name="job_name"/>
+                        				<field name="income"/>
+                        				<field name="date_of_birth"/>
+                        				<field name="age"/>		
+                        				<field name="total_income"/>
+                        			</tree>
+                        			<form>
+                        			    <group>
+	                        				<field name="job_name"/>
+	                        				<field name="income"/>
+	                        				<field name="other_income"/>
+	                        				<field name="total_income"/>
+	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
+	                           				<field name="age"/>
+	                           				<field name="month"/>
+	                           				<field name="days"/>
+				
+                        				</group>
+                        				<group>
+	                        				<field name="ben_wakf"/>
+	                           				<field name="check_required"/>
+                        				</group>
+                        			</form>
+                        		</field>
+                        	</page>
+                         	
+                        	<page string="Marriage" attrs="{'invisible':['|',('categ_name', '!=', 'Marriage'),('is_wakf', '=', True)]}">
+                        		<field name="sws_marriage_id" nolabel="1">
+                        			<tree string="Marriage Details">
+                        				<field name="job_name"/>
+                        				<field name="income"/>
+                        				<field name="total_income"/>
+                        				<field name="date_of_birth"/>
+                        				<field name="age"/>		
+                        			</tree>
+                        			<form>
+                        			    <group>
+	                        				<field name="job_name"/>
+	                        				<field name="income"/>
+	                        				<field name="other_income"/>
+	                        				<field name="total_income"/>
+	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
+	                           				<field name="age"/>
+	                           				<field name="month"/>
+	                           				<field name="days"/>
+				
+                        				</group>
+                        				<group>
+	                        				<field name="ben_wakf"/>
+	                           				<field name="check_required"/>
+	                           				<field name="date_marriage"/>
+	                           				<field name="guardian_name"/>
+                        				</group>
+                        			</form>
+                        		</field>
+                        	</page>
+                        	
+                        	<page string="Disease" attrs="{'invisible':['|',('categ_name', '!=', 'Disease'),('is_wakf', '=', True)]}">
+                        		<field name="sws_disease_id" nolabel="1">
+                        			<tree string="Disease Details">
+                        				<field name="job_name"/>
+                        				<field name="income"/>
+                        				<field name="date_of_birth"/>
+                        				<field name="age"/>	
+                        				<field name="total_income"/>	
+                        			</tree>
+                        			<form>
+                        			    <group>
+	                        				<field name="job_name"/>
+	                        				<field name="income"/>
+	                        				<field name="other_income"/>
+	                        				<field name="total_income"/>
+	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
+	                           				<field name="age"/>
+	                           				<field name="month"/>
+	                           				<field name="days"/>
+				
+                        				</group>
+                        				<group>
+	                        				<field name="ben_wakf"/>
+	                           				<field name="check_required"/>
+	                           				<field name="disease"/>
+	                           				<field name="guardian_name"/>
+                        				</group>
+                        			</form>
+                        		</field>
+                        	</page>
+                     
+                        	<page string="Maintenance" attrs="{'invisible':['|',('categ_name', '!=', 'Maintenance'),('is_wakf', '=', True)]}">
+                        		<field name="sws_maintenance_id" nolabel="1">
+                        			<tree string="Maintenance Details">
+                        				<field name="job_name"/>
+                        				<field name="income"/>
+                        				<field name="date_of_birth"/>
+                        				<field name="age"/>	
+                        				<field name="total_income"/>	
+                        			</tree>
+                        			<form>
+                        			    <group>
+	                        				<field name="job_name"/>
+	                        				<field name="income"/>
+	                        				<field name="other_income"/>
+	                        				<field name="total_income"/>
+	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
+	                           				<field name="age"/>
+	                           				<field name="month"/>
+	                           				<field name="days"/>
+				
+                        				</group>
+                        				<group>
+	                        				<field name="ben_wakf"/>
+	                           				<field name="check_required"/>
+	              
+                        				</group>
+                        			</form>
+                        		</field>
+                        	</page>
+                         	
+                        	<page string="Handicapped" attrs="{'invisible':['|',('categ_name', '!=', 'Handicapped'),('is_wakf', '=', True)]}">
+                        		<field name="sws_handicapped_id" nolabel="1">
+                        			<tree string="Handicapped Details">
+                        				<field name="job_name"/>
+                        				<field name="income"/>
+                        				<field name="date_of_birth"/>
+                        				<field name="age"/>	
+                        				<field name="total_income"/>	
+                        			</tree>
+                        			<form>
+                        			    <group>
+	                        				<field name="job_name"/>
+	                        				<field name="income"/>
+	                        				<field name="other_income"/>
+	                        				<field name="total_income"/>
+	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
+	                           				<field name="age"/>
+	                           				<field name="month"/>
+	                           				<field name="days"/>
+				        
+                        				</group>
+                        				<group>
+	                        				<field name="ben_wakf"/>
+	                           				<field name="check_required"/>
+                        				</group>
+                        			</form>
+                        		</field>
+                        	</page>
+                        	
+                        	<page string="Destitute" attrs="{'invisible':['|',('categ_name', '!=', 'Destitute'),('is_wakf', '=', True)]}">
+                        		<field name="sws_destitute_id" nolabel="1">
+                        			<tree string="Destitute Details">
+                        				<field name="job_name"/>
+                        				<field name="income"/>
+                        				<field name="date_of_birth"/>
+                        				<field name="age"/>	
+                        				<field name="total_income"/>	
+                        			</tree>
+                        			<form>
+                        			    <group>
+	                        				<field name="job_name"/>
+	                        				<field name="income"/>
+	                        				<field name="other_income"/>
+	                        				<field name="total_income"/>
+	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
+	                           				<field name="age"/>
+	                           				<field name="month"/>
+	                           				<field name="days"/>
+				
+                        				</group>
+                        				<group>
+	                        				<field name="ben_wakf"/>
+	                           				<field name="check_required"/>
+                        				</group>
+                        			</form>
+                        		</field>
+                        	</page>
+                        	<page string="Rejection Reason" attrs="{'invisible':['|',('state1', '!=', 'rejected'),('is_wakf', '=', True)]}">
+                        		<field name="sws_popup_id" nolabel="1" edit="False" delete="False">
+                        			<tree string="Rejected Reason">
+                        					<field name="name"/>	
+                        			</tree>
+                        			<form string="Rejected Reason">
+                        			    <group>
+					                        <field name="over_income"/>
+					                        <field name="grant_sanctioned"/>
+					                        <field name="after_marriage"/>
+					                        <field name="age_not_specified"/>
+					                        <field name="under_age"/>
+					                        <field name="exp_not_spcfed"/>
+					                        <field name="under_experience"/>
+					                        <field name="job_income_not"/>
+					                        <field name="no_reason"/>
+					                        <field name="no_annual_income"/>
+					                        <field name="mahal_not_regd"/>
+					                        <field name="undefined_ctgry"/>
+					                        <field name="certificate_not"/>
+					                        <field name="institue_not"/>
+                        				</group>
+                        			</form>
+                        		
+                        		</field>
+                        	</page>
+                        	
+                        	
+                    </xpath> 
+              <!--        </notebook>-->
+                    
+        	</field>	
+		
+			</record>
+		<record id="view_res_partner_inherited_1" model="ir.ui.view">
+  			<field name="name">view.res.partner.inherited</field>
+  			<field name="model">res.partner</field>
+  			<field name="inherit_id" ref="base.view_partner_tree" />
+  			<field name="arch" type="xml">
+  			<xpath expr="//tree[@string='Contacts']/field[@name='name']" position="before">
+  				<field name="wakf_reg_no"/>
+  			</xpath>
+  			<xpath expr="//tree[@string='Contacts']/field[@name='name']" position="after">
+  				<field name="district_id"/>
+  			</xpath>
+  			</field>
+  			</record>
+  				
+		<record id="view_res_partner_inherited_2" model="ir.ui.view">
+  			<field name="name">view.res.partner.inherited</field>
+  			<field name="model">res.partner</field>
+  			<field name="inherit_id" ref="base.view_res_partner_filter" />
+  			<field name="arch" type="xml">	
+  				<xpath expr="//search[@string='Search Partner']/field[@name='name']" position="replace">
+  					<field name="wakf_reg_no" filter_domain="['|','|',('wakf_reg_no','=',self),('parent_id','ilike',self),('ref','=',self)]"/>
+  				</xpath>
+  			</field>
+  			</record>
+  		<!-- ==============================  Supplier Tree View inherit ================================== 	
+  			<record id="view_res_partner_tree_supplier" model="ir.ui.view">
+  			<field name="name">res.partner.tree.supplier</field>
+  			<field name="model">res.partner</field>
+  			<field name="inherit_id" ref="base.view_partner_tree" />
+  			<field name="arch" type="xml">
+  			 	<xpath expr="//tree/field[@name='phone']" position="replace"/>
+  				
+  				<xpath expr="//tree/field[@name='email']" position="replace"/>
+  					
+  				<xpath expr="//tree" position="inside">
+  					<field name="appli_date"/>
+  					<field name="full_name"/>
+  					<field name="head"/>
+  					<field name="category"/>
+  					<field name="reg_no"/>
+  					<field name="state1"/>
+  				</xpath>
+  			
+  			</field>
+  			</record>-->
+  			<!--  
+  			<record model="ir.cron" id="resource_panelty_cron">
+            <field name="name">Resource Panelty Count</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field eval="False" name="doall"/>
+            <field eval="'sws.registration'" name="model"/>
+            <field eval="'action_scheduler'" name="function"/>
+            <field eval="'()'" name="args"/>
+        	</record>
+			-->
+
+	</data>
+</openerp>
+
+	 
