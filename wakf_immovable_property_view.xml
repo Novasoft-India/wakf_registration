@@ -9,11 +9,12 @@
                 <field name="arch" type="xml">
                     <tree string="tree_string">
                         <field name="name"/>
-                        <field name="wakf_id"/>
                         <field name="type_id"/>
-                        <field name="landtype_id"/>
-                        <field name="village_id"/>
-                        <field name="taluk_id"/>
+                        <field name="survey_no"/>
+                        <field name="area"/>
+                        <field name="units_id"/>
+                        <field name="converted_area"/>
+                        <field name="location_boundaries"/>
                         <field name="district_id"/>
                     </tree>
                 </field>
@@ -45,7 +46,8 @@
                      	</group> 
                      	<group > 
                         	<field name="area"/>
-                      		<field name="units_id"/>   	
+                      		<field name="units_id"/>
+                      		<field name="converted_area"/>   	
                       		<field name="propery_classification"/>
                       		<field name="wakf_objectives"/>
                       		<field name="value"/>   	
