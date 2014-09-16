@@ -682,8 +682,7 @@ class wakf_registration(osv.osv):
         ('wakf_reg_uniq', 'Check(wakf_reg_no=wakf_reg_no)', 'Register Number already exists !'),
     ]
     
-sale_inherit()
-
+wakf_registration()    
 
 class pension_disease_history(osv.osv):
  
@@ -718,5 +717,5 @@ class pension_disease_history(osv.osv):
             'main_id': fields.many2one('res.partner', 'History of Transaction', readonly=False),
                 }   
 
+pension_disease_history()
     
-wakf_registration()

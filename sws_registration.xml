@@ -53,7 +53,7 @@
                         				<field name="date_of_birth"/>
                         				<field name="age"/>
                         				<field name="qualification"/>
-                        				<field name="experience_total"/>		
+                        					
                         			</tree>
                         			<form>
                         			    <group>
@@ -71,7 +71,7 @@
 	                        				<field name="total_annual_income"/>
 	                        				<field name="experience_from"/>
 	                        				<field name="experience_to"/>
-	                        				<field name="experience_total"/>
+	                        				
 	                        				<field name="mahal_details"/>
 	                        				<field name="benefits"/>
                         				</group>
@@ -404,7 +404,7 @@
 		<!-- ====================================== SWS Action Menus ======================================= -->		
 		<menuitem id="sws_main_menu" name="SWS" parent="" />
 		<menuitem id="sws_sub_head" name="SWS Registration" parent="sws_main_menu" />		
-		<menuitem id="sws_registration" name="Registration" parent="sws_sub_head" sequence="1" action="action_partner_supplier_form_demo"/>
+		<!--  <menuitem id="sws_registration" name="Registration" parent="sws_sub_head" sequence="1" action="action_partner_supplier_form_demo"/> -->
 		<menuitem id="sws_criteria_menu" name="SWS Criteria" parent="sws_sub_head" sequence="2" action="action_sws_criteria_tree_view"/>
 		<menuitem id="sws_scholar_criteria_menu" name="SWS Scholarship Criteria" parent="sws_sub_head" sequence="3" action="action_sws_scholar_criteria_tree_view"/>
     
