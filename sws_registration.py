@@ -97,6 +97,9 @@ class sws_category_pension(osv.osv):
     def exp_year(self, cr, uid, ids,fields,arg, context=None):
         criteria_id = self.pool.get('sws.criteria')
         a = []
+        exp_year = 0
+        exp_month = 0
+        exp_days = 0
         total_month = 0
         total_days = 0
         min_exp = 0
@@ -106,7 +109,7 @@ class sws_category_pension(osv.osv):
         month_list = []
         day_list = []
         dicti = {}
-        search_condition = [('name','in',["Graduate Arabic Teacher/Mudri","Khadim,attendar,Cleaner,Imams helper","Teachers/Imam"])]
+        search_condition = [('name','in',["Graduate Arabic Teacher/Mudris","Khadim,attendar,Cleaner,Imams helper","Teachers/Imam"])]
         search_ids = self.pool.get('product.product').search(cr,uid,search_condition, context=context)
         if search_ids:
             category = self.pool.get('product.product').browse(cr,uid,search_ids)[0].id
@@ -258,11 +261,12 @@ class sws_category_pension_line(osv.osv):
             id_res_partner=self.pool.get('res.partner')
             search_condition = [('wakf_reg_no', '=', reg_no)]
             search_ids = id_res_partner.search(cr, uid, search_condition, context=context)
-            similar_objs = id_res_partner.browse(cr, uid, search_ids, context=context)[0]
-            if similar_objs:
+            if search_ids:
+                similar_objs = id_res_partner.browse(cr, uid, search_ids, context=context)[0]
                 values={'partner_id':similar_objs.id,
-                        }
-            return {'value' :values}
+                            }
+                return {'value' :values}
+        return False
     
     _columns={
               'line_id':fields.many2one('sws.category.pension','PENSION line',ondelete='set null'),

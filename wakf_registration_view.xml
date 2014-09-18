@@ -38,7 +38,7 @@
                 		<button name="action_approve1" string="Approve" type="object" icon="gtk-go-forward" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'verified')]}"/>
                 		<button name="action_sanction" string="Sanction" type="object" icon="gtk-go-forward" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'approved')]}"/>
                 		<button name="action_reject1"  string="Reject" type="object" icon="gtk-goto-last" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'verified'),('state1', '!=', 'approved')]}"/>  
-                		<field name="state1" widget="statusbar" statusbar_visible="submitted,verified,approved,sanctioned,rejected,re_payment,paid" attrs="{'invisible':['|',('is_person', '!=', True),('is_wakf', '=', True)]}"/>
+                		<field name="state1" widget="statusbar" statusbar_visible="submitted,verified,approved,sanctioned,revolving,finished,rejected,re_payment,paid" attrs="{'invisible':['|',('is_person', '!=', True),('is_wakf', '=', True)]}"/>
                     </header>
                 </xpath>
     		
@@ -110,17 +110,20 @@
 			                        <field name="reg_no" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}" on_change="on_change_wakf_regno_to_name(reg_no)"/>
 			                        <field name="wakf_id" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
 			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected'])]}" name="meeting_place"/>
-			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned']),('categ_name','=','Education Loan')],'invisible':[('state1','not in',['verified','approved','sanctioned']),('head','!=','Education Loan')],'readonly':[('state1','in',['approved','sanctioned','rejected'])]}" name="course_end"/>
+			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned']),('categ_name','=','Education Loan')],'invisible':['|',('state1','not in',['verified','approved','sanctioned']),('categ_name','!=','Education Loan')],'readonly':[('state1','in',['approved','sanctioned','rejected'])]}" name="course_end"/>
 			                        
                        			</group>
-                       			<group  attrs="{'invisible':['|',('is_person', '!=', True),('state1', 'not in',['approved','sanctioned','re_payment','paid'])]}" string="Sanction Details">
-                       				<field attrs="{'required':[('state1','in',['approved','sanctioned'])]}" name="amount_sanction"/>
-                       				<field name="acc_no" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
-                       				<field name="bank" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
-                       				<field name="mo_details" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
-                       				<field name="cheque_no" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
+                       			<group  attrs="{'invisible':['|',('is_person', '!=', True),('state1', 'not in',['approved','sanctioned','re_payment','paid','revolving','finished'])]}" string="Sanction Details">
+                       				<field attrs="{'required':[('state1','in',['approved','sanctioned'])],'readonly':[('state1','in',['paid','finished','revolving'])]}" name="amount_sanction"/>
+                       				<field name="sanction_details" attrs="{'readonly':[('state1','in',['sanctioned','rejected','re_payment','paid','finished','revolving'])]}"/>
+                       				<field name="date_sanction" attrs="{'readonly':[('state1','in',['sanctioned','rejected','re_payment','paid','finished','revolving'])]}"/>
                        			</group>
-                       			
+                       			<!--  
+                       			<group  attrs="{'invisible':['|',('is_person', '!=', True),('state1', 'not in',['re_payment','paid','revolving','finished'])]}" string="Return Details">
+                       				<field attrs="{'readonly':[('state1','in',['re_payment','paid','finished','revolving'])]}" name="amount_balance"/>
+                       				<field name="amount_received" attrs="{'readonly':[('state1','in',['re_payment','paid','finished','revolving'])]}"/>
+                       			</group>
+                       			-->
                  </xpath>
                         
                   <xpath expr="//page[@string='Sales &amp; Purchases']" position="attributes" >
@@ -497,6 +500,19 @@
                         		
                         		</field>
                         	</page>
+                        	<page string="Previous Transactions" attrs="{'invisible':[('state1', '!=', 'sanctioned'),('is_wakf', '=', True),('categ_name','!=','Pension')]}">
+                        		<field name="history_transaction" nolabel="1" edit="False" delete="False">
+                        			<tree string="Transactions">	    
+					                        <field name="year"/>
+					                        <field name="for_month"/>
+					                        <field name="amount"/>
+					                        <field name="dd_no"/>
+					                        <field name="transaction_no"/>
+					                        <field name="status"/>
+                        			</tree>
+                        		
+                        		</field>
+                        	</page>
                         	
                         	
                     </xpath> 
@@ -505,12 +521,13 @@
         	</field>	
 		
 			</record>
+		 
 		<record id="view_res_partner_inherited_1" model="ir.ui.view">
   			<field name="name">view.res.partner.inherited</field>
   			<field name="model">res.partner</field>
   			<field name="inherit_id" ref="base.view_partner_tree" />
   			<field name="arch" type="xml">
-  			<xpath expr="//tree[@string='Contacts']/field[@name='name']" position="before">
+  		  	<xpath expr="//tree[@string='Contacts']/field[@name='name']" position="before">
   				<field name="wakf_reg_no"/>
   			</xpath>
   			<xpath expr="//tree[@string='Contacts']/field[@name='name']" position="after">

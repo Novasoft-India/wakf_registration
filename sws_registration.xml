@@ -52,13 +52,13 @@
                         			<tree string="Pension Details">
                         				<field name="date_of_birth"/>
                         				<field name="age"/>
-                        			    <field name="qualification"/> 
-                        				<!--<field name="experience_total"/>-->		
+                        				<field name="qualification"/>
+                        					
                         			</tree>
                         			<form>
                         			    <group>
 	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
-	                        				<field name="age"/>
+	                        				<field name="age"/>years
 	                        				<field name="month"/>
 	                        				<field name="days"/>
 	                        				<field name="qualification"/>
@@ -71,7 +71,7 @@
 	                        				<field name="total_annual_income"/>
 	                        				<field name="experience_from"/>
 	                        				<field name="experience_to"/>
-	                        				<!--<field name="experience_total"/>-->	
+	                        				
 	                        				<field name="mahal_details"/>
 	                        				<field name="benefits"/>
                         				</group>
@@ -351,7 +351,10 @@
                 <field name="view_mode">tree,form</field>
                 <field name="view_id" ref="sws_registration_tree_view"/>
             </record>
-	
+<!-- 
+			<menuitem id="sws_registration_menu" name="sws.registration" parent="assessment1_window_menu" action="action_sws_registration_tree_view"/>
+			
+	 -->		
             
             <record model="ir.ui.view" id="pop_up_cancel_tree_view">
                 <field name="name">pop.up.cancel.tree</field>
@@ -398,31 +401,10 @@
                 <field name="view_mode">tree,form</field>
                 <field name="view_id" ref="pop_up_cancel_tree_view"/>
             </record>
-          
-          
-	        <record id="action_partner_supplier_form_demo" model="ir.actions.act_window">
-				<field name="name">Suppliers</field>
-				<field name="type">ir.actions.act_window</field>
-				<field name="res_model">res.partner</field>
-				<field name="view_type">form</field>
-				<field name="domain">[]</field>
-				<field name="auto_refresh">10</field>
-				<field name="view_mode">kanban,tree,form</field>
-				<field name="context">{'search_default_supplier': 1,'default_customer': 0,'default_supplier': 1,'default_is_wakf': 0}
-				</field>
-				<field name="filter" eval="True"/>
-				<field name="help" type="html">
-				<p class="oe_view_nocontent_create">Click to add a contact in your address book.</p>
-				<p>
-						OpenERP helps you easily track all activities related to a supplier: discussions, history of purchases, documents, etc.
-				</p>
-				</field>
-			</record>
-			
 		<!-- ====================================== SWS Action Menus ======================================= -->		
 		<menuitem id="sws_main_menu" name="SWS" parent="" />
 		<menuitem id="sws_sub_head" name="SWS Registration" parent="sws_main_menu" />		
-		<menuitem id="sws_registration" name="Registration" parent="sws_sub_head" sequence="1" action="action_partner_supplier_form_demo"/>
+		<!--  <menuitem id="sws_registration" name="Registration" parent="sws_sub_head" sequence="1" action="action_partner_supplier_form_demo"/> -->
 		<menuitem id="sws_criteria_menu" name="SWS Criteria" parent="sws_sub_head" sequence="2" action="action_sws_criteria_tree_view"/>
 		<menuitem id="sws_scholar_criteria_menu" name="SWS Scholarship Criteria" parent="sws_sub_head" sequence="3" action="action_sws_scholar_criteria_tree_view"/>
     

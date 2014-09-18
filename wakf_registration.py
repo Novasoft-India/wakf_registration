@@ -14,7 +14,7 @@ class wakf_registration(osv.osv):
     _inherit = 'res.partner'
     
   
-    # Description :      
+    
     def on_change_wakf_village_to_taluk(self, cr, uid, ids, village_id, context=None):
         values = {}
         if village_id:
@@ -26,7 +26,6 @@ class wakf_registration(osv.osv):
             }
         return {'value' : values}
     
-    # Description :      
     def on_change_name(self, cr, uid, ids, is_wakf, context=None):
         values = {}
         if not is_wakf:
@@ -36,7 +35,6 @@ class wakf_registration(osv.osv):
             }
             return {'value' : values}
         return False
-    # Description :      
     def on_change_category(self, cr, uid, ids, category_id, context=None):
         values = {}
         if category_id:
@@ -52,7 +50,6 @@ class wakf_registration(osv.osv):
             }
         return {'value' : values}
     
-    # Description :      
     def on_change_tick_same(self, cr, uid, ids, tick,datas, context=None):
         values = {}
         if tick and datas:
@@ -65,7 +62,6 @@ class wakf_registration(osv.osv):
             }
         return {'value' : values}
     
-    # Description :      
     def reg_type_wakf(self, cr, uid, ids,is_wakf, context=None):
         if not is_wakf:
             return{'value':{'details':False,'postoffice':False,'rule_succession':False,'phone':False,'wakf_old_name':False,
@@ -77,8 +73,6 @@ class wakf_registration(osv.osv):
                              }}
         if is_wakf:
             return{'value':{'reg_type':'wakf'}}
-            
-    # Description :              
     def reg_type_person(self, cr, uid, ids,is_person, context=None):
         if not is_person:
             return{'value':{'appli_no':False,'category':False,'appli_date':False,'full_name':False,'address':False,
@@ -90,7 +84,6 @@ class wakf_registration(osv.osv):
         if is_person:
             return{'value':{'reg_type':'person'}}
     
-    # Description :      
     def on_change_wakf_regno_to_name(self, cr, uid, ids, reg_no, context=None):
         values = {}
         if reg_no:
@@ -104,8 +97,6 @@ class wakf_registration(osv.osv):
                             }
                 return {'value' :values}
         return False
-    
-    # Description :      
     def action_reject1(self, cr, uid, ids, context=None):
         cancel_list =[]
         cancel_dict = {
@@ -135,7 +126,6 @@ class wakf_registration(osv.osv):
                 }
         #return True
     
-    # Description :      
     def action_verify1(self, cr, uid, ids, context=None):
         criteria_id = self.pool.get('sws.criteria')
         education_criteria_id = self.pool.get('sws.scholar.criteria')
@@ -445,23 +435,21 @@ class wakf_registration(osv.osv):
                                 self.write(cr, uid, ids, {'state1':'rejected','date_verified':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),'verified_by':uid,'sws_popup_id':cancel_list})
         return True
     
-    # Description :      
     def action_submit(self, cr, uid, ids, context=None):
         for rec in self.browse(cr, uid, ids, context=context):
             sequence=self.pool.get('ir.sequence').get(cr, uid, 'SWS')
         self.write(cr, uid, ids, {'appli_no':sequence,'state1':'submitted','date_submitted':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),'submitted_by':uid})
         return True
     
-    # Description :      
     def action_approve1(self, cr, uid, ids, context=None):
         invoice_ids = []
         for rec in self.browse(cr, uid, ids, context=context):
             self.write(cr, uid, ids, {'state1':'approved','date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),'approved_by':uid})
         return True
     
-    # Description :      
     def action_sanction(self, cr, uid, ids, context=None):
         invoice_ids = []
+        transaction_list = []
         invoice_obj = self.pool.get('account.invoice')
         for rec in self.browse(cr, uid, ids, context=context):
             self.write(cr, uid, ids, {'state1':'sanctioned','date_sanctioned':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),'sanctioned_by':uid})
@@ -469,26 +457,93 @@ class wakf_registration(osv.osv):
             product = rec.category.id
             name = "SWS"+"-"+rec.category.name
             quantity = 1
+            head = rec.head.id
             #price_subtotal = 100
             price_unit = rec.amount_sanction
             new_amount = rec.amount_sanction
             appli_no = rec.appli_no
+            ############################
+            date_today = date.today()
+            month = date_today.month
+            year = date_today.year
+            if month == 1: 
+                month = 'JAN'
+            if month == 2: 
+                month = 'FEB'
+            if month == 3: 
+                month = 'MAR'
+            if month == 4: 
+                month = 'APR'
+            if month == 5: 
+                month = 'MAY'
+            if month == 6: 
+                month = 'JUN'
+            if month == 7: 
+                month = 'JUL'
+            if month == 8: 
+                month = 'AUG'
+            if month == 9: 
+                month = 'SEP'
+            if month == 10: 
+                month = 'OCT'
+            if month == 11: 
+                month = 'NOV'
+            if month == 12: 
+                month = 'DEC'
+            #############################
             invoice_ids.append((0,0,{'product_id':product,'name':name,'quantity':quantity,'price_unit':price_unit,'new_amount':new_amount,'sws':True}))
         if rec.category.name == "Education":
-            self.pool.get('account.invoice').create(cr,uid,{'journal_type':'sale','type':'out_invoice','is_sws':True,'appli_no':appli_no,'account_id':1,'journal_id':2,'partner_id':output,'invoice_line':invoice_ids})
+            ###############################################################################################
+            search_ids = self.pool.get('account.account').search(cr,uid,[('name','=',"Accounts Receivable")])
+            if not search_ids:
+                raise osv.except_osv(_('Warning!'), _('Please create an account "Accounts Receivable" first'))
+            account_id = self.pool.get('account.account').browse(cr,uid,search_ids)[0].id
+            
+            search_ids = self.pool.get('account.journal').search(cr,uid,[('name','=',"Assessment Journal")])
+            if not search_ids:
+                raise osv.except_osv(_('Warning!'), _('Please create "Assessment Journal" First'))
+            journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
+            ###############################################################################################
+            self.pool.get('account.invoice').create(cr,uid,{'head':head,'journal_type':'sale','type':'out_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})
             self.write(cr,uid,ids,{'state1':'sanctioned'})
+        if rec.head.name == "Pension":
+            ###########################################################################
+            search_ids = self.pool.get('account.account').search(cr,uid,[('name','=',"Accounts Payable")])
+            if not search_ids:
+                raise osv.except_osv(_('Warning!'), _('Please create an account "Accounts Payable" first'))
+            account_id = self.pool.get('account.account').browse(cr,uid,search_ids)[0].id
+            
+            search_ids = self.pool.get('account.journal').search(cr,uid,[('name','=',"Purchase Journal")])
+            if not search_ids:
+                raise osv.except_osv(_('Warning!'), _('Please create "Purchase Journal" First'))
+            journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
+            ##############################################################################
+            self.pool.get('account.invoice').create(cr,uid,{'key':"pension",'head':head,'for_month':month,'year':year,'amount':price_unit,'journal_type':'purchase','type':'in_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})   
+            transaction_list.append((0,0,{'for_month':month,'year':year,'amount':price_unit,'status':'pending'}))
+            self.write(cr,uid,ids,{'state1':'sanctioned','history_transaction':transaction_list})
         else:
-            self.pool.get('account.invoice').create(cr,uid,{'journal_type':'purchase','type':'in_invoice','is_sws':True,'appli_no':appli_no,'account_id':1,'journal_id':2,'partner_id':output,'invoice_line':invoice_ids})
-            self.write(cr,uid,ids,{'state1':'sanctioned'})
+            ###########################################################################
+            search_ids = self.pool.get('account.account').search(cr,uid,[('name','=',"Accounts Payable")])
+            if not search_ids:
+                raise osv.except_osv(_('Warning!'), _('Please create an account "Accounts Payable" first'))
+            account_id = self.pool.get('account.account').browse(cr,uid,search_ids)[0].id
+            
+            search_ids = self.pool.get('account.journal').search(cr,uid,[('name','=',"Purchase Journal")])
+            if not search_ids:
+                raise osv.except_osv(_('Warning!'), _('Please create "Purchase Journal" First'))
+            journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
+            ##############################################################################
+            self.pool.get('account.invoice').create(cr,uid,{'head':head,'for_month':month,'year':year,'amount':price_unit,'journal_type':'purchase','type':'in_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})   
+            transaction_list.append((0,0,{'for_month':month,'year':year,'amount':price_unit,'status':'pending'}))
+            self.write(cr,uid,ids,{'state1':'sanctioned','history_transaction':transaction_list})
         return True
            
     
-    # Description :      
     def method_name(self, cr, uid, ids, context=None):
         """Method is used to show form view in new windows"""
         this = self.browse(cr, uid, ids, context=context)[0]  
         mod_obj = self.pool.get('ir.model.data')  
-        res = mod_obj.get_object_reference(cr, uid, 'wakf_registration', 'pop_up_cancel_tree_view')
+        res = mod_obj.get_object_reference(cr, uid, 'sale_inherit', 'pop_up_cancel_tree_view')
         return {
            'type': 'ir.actions.act_window',
            'name': 'POPUP',
@@ -575,6 +630,7 @@ class wakf_registration(osv.osv):
             'sws_handicapped_id':fields.one2many('sws.category.handicaped','sws_id1','Handicapped Details'),
             'sws_destitute_id':fields.one2many('sws.category.destitute','sws_id1','Destitute Details'),
             'sws_popup_id':fields.one2many('pop.up.cancel','sws_id1','POP up Details'),
+            'history_transaction':fields.one2many('pension.disease.history','main_id','History of Trnsctn Details'),
             'popup_id': fields.many2one('pop.up.cancel', 'POPUP', required=False),
             'submitted_by': fields.many2one('res.users', 'Submitted by', readonly=True),
             'date_submitted': fields.datetime('Date Submitted', readonly=True),
@@ -592,26 +648,31 @@ class wakf_registration(osv.osv):
             'state1': fields.selection([
                 ('submitted', 'Submitted'),
                 ('verified', 'Verified'),
-                ('approved', 'Approved'),
-                ('sanctioned', 'Sanctioned'),
+                ('approved', 'Board Approved'),
+                ('sanctioned', 'Amount Sanctioned'),
+                ('revolving', 'Revolving'),
+                ('finished', 'Finished'),
                 ('rejected', 'Rejected'),
                 ('re_payment', 'Ready for Refund'),
                 ('paid', 'Refund Completed'),
                 ],'status', readonly=False),
             'amount_sanction':fields.float('Amount Sanction'),
-            'acc_no':fields.char('Account No:'),
-            'bank':fields.char('Bank Name'),
-            'mo_details':fields.char('Money Order No'),
-            'cheque_no':fields.char('Cheque No'),
+            'sanction_details':fields.char('Sanction Details',size=256),
+            'date_sanction':fields.date('Starting Date'),
             'meeting_place':fields.char('Meeting Place'),
             'course_end':fields.date('Course Ending Date'),
+            
+            'amount_balance':fields.float('Balance Amount'),
+            'amount_received':fields.char('Amount Received'),
+            
             'head': fields.many2one('product.category', 'Head',domain=[('parent_id','!=',1)]),
             
             
               
         }
     _defaults = {
-                 'is_wakf':True 
+                 'is_wakf':True,
+                 'company_id': lambda self,cr,uid,ctx: self.pool['res.company']._company_default_get(cr,uid,object='res.partner',context=ctx) 
                 #'state1':lambda *a:'submitted',
                 #'submitted_by': lambda obj, cr, uid, context: uid,
                 #'date_submitted':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
@@ -621,4 +682,40 @@ class wakf_registration(osv.osv):
         ('wakf_reg_uniq', 'Check(wakf_reg_no=wakf_reg_no)', 'Register Number already exists !'),
     ]
     
-wakf_registration()
+wakf_registration()    
+
+class pension_disease_history(osv.osv):
+ 
+ 
+    _name = 'pension.disease.history'
+    _columns = {
+            'year':fields.char('Year'),
+            #'for_month': fields.char('For Month'),
+            'for_month': fields.selection([
+                ('JAN', 'January'),
+                ('FEB', 'February'),
+                ('MAR', 'March'),
+                ('APR', 'April'),
+                ('MAY', 'May'),
+                ('JUN', 'June'),
+                ('JUL', 'July'),
+                ('AUG', 'August'),
+                ('SEP', 'September'),
+                ('OCT', 'October'),
+                ('NOV', 'November'),
+                ('DEC', 'December'),
+                ],'For Month of', readonly=True),
+            'amount':fields.float('Amount'),
+            'dd_no':fields.char('Cheque/DD No'),
+            'transaction_no':fields.char('Transaction No'),
+            'status': fields.selection([
+                ('paid', 'Paid'),
+                ('pending', 'Pending'),
+                ('returned', 'Returned'),
+                ('closed', 'Closed'),
+                ],'Status', readonly=True),
+            'main_id': fields.many2one('res.partner', 'History of Transaction', readonly=False),
+                }   
+
+pension_disease_history()
+    
