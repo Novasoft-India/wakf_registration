@@ -1,5 +1,5 @@
-from openerp.osv import osv
-from openerp.osv import fields
+from osv import osv
+from osv import fields
 
 class wakf_immovableproperty(osv.osv):
     """
@@ -13,6 +13,7 @@ class wakf_immovableproperty(osv.osv):
         for record in self.browse(cr, uid, ids):
             area_non_standard = record.area
             unit = record.units_id.code
+            value=0
             ################ LookUp Table ################
             # 1 Acre = 100.01467985501355 Cent
             # 1 Sq.Feet = 0.002296 Cent
@@ -39,23 +40,22 @@ class wakf_immovableproperty(osv.osv):
  
     _columns = {
             'wakf_id':fields.many2one('res.partner','Wakf Name',ondelete='set null'), 
-            'type_id':fields.many2one('wakf.type','Wakf Type',ondelete='set null',required=True),
-                        
+            'type_id':fields.many2one('wakf.type','Wakf Type',ondelete='set null',required=False),                        
             'name':fields.char('Name', size=128, required=True),
-            'landtype_id':fields.many2one('wakf.landtype','Land Type',ondelete='set null'),
+            'landtype_id':fields.char('Land Type', size=128, required=False),
             'location_boundaries':fields.text('Location / Boundaries',required=False),
             'propery_specifications':fields.text('Wakf Objectives',required=False),
             'area':fields.float('Area',required=False),
             'units_id':fields.many2one('wakf.units','Units',ondelete='set null'),
-            'propery_classification':fields.selection((('rural','Rural'), ('urban','Urban')),'Rural/Urban',required=True),
+            'propery_classification':fields.selection((('rural','Rural'), ('urban','Urban')),'Rural/Urban',required=False),
             'wakf_objectives':fields.text('Wakf Objectives',required=False),
             'value':fields.float('Estimated Value',required=False),
             'valuation_date':fields.date('Valuation Date',required=False),
-            'property_curr_status':fields.many2one('wakf.properystatus','Property Status',ondelete='set null'),
+            'property_curr_status':fields.char('Property Status', size=128, required=False),
             'survey_no':fields.char('Survey Number',size=64,required=True),
-            'survey_details':fields.text('survey Details',required=False),
+            'survey_details':fields.text('Survey Details',required=False),
             'survey_date':fields.date('Survey Date',required=False),
-            'census_code':fields.char('Censud Code',size=8,required=False),
+            'census_code':fields.char('Census Code',size=8,required=False),
             'khata_no':fields.char('Khata No',size=8,required=False),
             'khewat_no':fields.char('Khasra / Khewat No',size=8,required=False),
             'amsom':fields.char('Amsom',size=8,required=False),

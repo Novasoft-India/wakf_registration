@@ -37,9 +37,7 @@
                        </div>
                        <group>
                        <group>
-                            <field name="wakf_id"/>
-                            
-                        	<field name="type_id"/>                    	                     	
+                            <field name="wakf_id"/>                                       	                     	
                      		<field name="landtype_id"/>
                       		<field name="location_boundaries"/>
                       		<field name="propery_specifications"/>
