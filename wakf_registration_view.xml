@@ -522,6 +522,8 @@
 		
 			</record>
 		 
+		<!-- ========================================  UPDATES ========================================== --> 
+		<!-- ============================================================================================= -->
 		<record id="view_res_partner_inherited_1" model="ir.ui.view">
   			<field name="name">view.res.partner.inherited</field>
   			<field name="model">res.partner</field>
@@ -529,13 +531,15 @@
   			<field name="arch" type="xml">
   		  	<xpath expr="//tree[@string='Contacts']/field[@name='name']" position="before">
   				<field name="wakf_reg_no"/>
+  				<field name="appli_no"/>
   			</xpath>
   			<xpath expr="//tree[@string='Contacts']/field[@name='name']" position="after">
   				<field name="district_id"/>
+  				<field name="district_sws_id"/>
   			</xpath>
   			</field>
   			</record>
-  				
+		<!-- ============================================================================================= -->
 		<record id="view_res_partner_inherited_2" model="ir.ui.view">
   			<field name="name">view.res.partner.inherited</field>
   			<field name="model">res.partner</field>
@@ -543,7 +547,55 @@
   			<field name="arch" type="xml">	
   				<xpath expr="//search[@string='Search Partner']/field[@name='name']" position="replace">
   					<field name="wakf_reg_no" filter_domain="['|','|',('wakf_reg_no','=',self),('parent_id','ilike',self),('ref','=',self)]"/>
+  					<field name="appli_no" string="Application Number" filter_domain="[(('appli_no','=',self))]"/>
+  					
   				</xpath>
+  				<!-- ############################# UPDATES ############################### -->
+  			 	<xpath expr="//search[@string='Search Partner']" position="inside">
+  			 		<group expand="0" string="Location-Filter By...">
+  			 		<filter string="Ernakulam District" name="open"  domain="[('district_id.name','=','Ernakulam')]" help="District of Wakf"/>
+  			 		<filter string="Trivandrum District" name="open"  domain="[('district_id.name','=','Thiruvananthapuram')]" help="District of Wakf"/>
+  			 		<filter string="Kollam District" name="open"  domain="[('district_id.name','=','Kollam')]" help="District of Wakf"/>
+  			 		<filter string="Pathanamthitta District" name="open"  domain="[('district_id.name','=','Pathanamthitta')]" help="District of Wakf"/>
+  			 		<filter string="Alappuzha District" name="open"  domain="[('district_id.name','=','Alappuzha')]" help="District of Wakf"/>
+  			 		<filter string="Idukki District" name="open"  domain="[('district_id.name','=','Idukki')]" help="District of Wakf"/>
+  			 		<filter string="Kottayam District" name="open"  domain="[('district_id.name','=','Kottayam')]" help="District of Wakf"/>
+  			 		<filter string="Thrissur District" name="open"  domain="[('district_id.name','=','Thrissur')]" help="District of Wakf"/>
+  			 		<filter string="Malappuram District" name="open"  domain="[('district_id.name','=','Malappuram')]" help="District of Wakf"/>
+  			 		<filter string="Palakkad District" name="open"  domain="[('district_id.name','=','Palakkad')]" help="District of Wakf"/>
+  			 		<filter string="Wayanad District" name="open"  domain="[('district_id.name','=','Wayanad')]" help="District of Wakf"/>
+  			 		<filter string="Kozhikkode District" name="open"  domain="[('district_id.name','=','Kozhikkode')]" help="District of Wakf"/>
+  			 		<filter string="Kannur District" name="open"  domain="[('district_id.name','=','Kannur')]" help="District of Wakf"/>
+  			 		<filter string="Kazargode District" name="open"  domain="[('district_id.name','=','Kazargode')]" help="District of Wakf"/>
+  			 		</group>
+  			 		<group expand="0" string="SWS - Filter By...">
+  					<filter string="Submitted" name="open"  domain="[('state1','!=','submitted')]" help="Submitted Applications"/>
+	                <filter string="Verified" name="open" domain="[('state1','!=','verified')]" help="Verified Applications"/>
+	                <filter string="Approved" name="open" domain="[('state1','!=','approved')]" help="Approved Applications"/>
+	                <filter string="Sactioned" name="open" domain="[('state1','!=','sanctioned')]" help="Sanctioned Applications"/>
+	                <filter string="Revolving" name="open" domain="[('state1','!=','revolving')]" help="Revolving Applications"/>
+	                <filter string="Finished" name="open" domain="[('state1','!=','finished')]" help="Finished Application"/>
+	                <filter string="Rejected" name="open" domain="[('state1','!=','rejected')]" help="Rejected Applications"/>
+	                <filter string="Ready for Refund" name="open" domain="[('state1','!=','re_payment')]" help="Open Education Loans"/>
+	                <filter string="Refund Completed" name="open" domain="[('state1','!=','paid')]" help="Education Loan Closed"/>
+  				    <filter string="Application No" name="open" domain="[('appli_no','=',self)]" help="Education Loan Closed"/>
+  					
+  					</group>
+  					<group expand="0" string="SWS - Group By...">
+	              		<filter string="Head" domain="[]" context="{'group_by':'head'}"/>
+	              		<filter string="Application Date" domain="[]" context="{'group_by':'appli_date'}"/>
+	              		<filter string="District" domain="[]" context="{'group_by':'district_sws_id'}"/>
+	              		<filter string="Wakf Register No" domain="[]" context="{'group_by':'reg_no'}"/>              		
+                 	</group>
+  				</xpath> 
+  				<xpath expr="//search[@string='Search Partner']/group[@string='Group By...']" position="inside">
+  						<filter string="District" domain="[]" context="{'group_by':'district_id'}"/>
+  						<filter string="Wakf Taluk" domain="[]" context="{'group_by':'taluk_id'}"/>
+  						<filter string="Wakf Village" domain="[]" context="{'group_by':'village_id'}"/>
+  						<filter string="Wakf Type" domain="[]" context="{'group_by':'type_id'}"/>
+  				</xpath> 
+  				
+  				<!-- ############################# UPDATES ############################### -->
   			</field>
   			</record>
   		<!-- ==============================  Supplier Tree View inherit ================================== 	

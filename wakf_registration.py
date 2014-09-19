@@ -6,6 +6,7 @@ import time
 from datetime import datetime
 from datetime import date,timedelta
 from dateutil.relativedelta import relativedelta
+from tools.translate import _
 
 class wakf_registration(osv.osv):
  

@@ -5,6 +5,7 @@ from datetime import date,timedelta
 from dateutil.relativedelta import relativedelta
 from tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, float_compare
 import time
+from tools.translate import _
 
 
 class sws_registration(osv.osv):

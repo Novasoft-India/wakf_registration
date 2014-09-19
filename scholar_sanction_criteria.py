@@ -1,5 +1,6 @@
 from osv import osv
 from osv import fields
+from tools.translate import _
 
 class SWS_Scholar_sanction_Criteria(osv.osv):
  
