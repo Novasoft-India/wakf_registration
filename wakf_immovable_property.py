@@ -35,6 +35,7 @@ class wakf_immovableproperty(osv.osv):
             if unit == 'KANL': value = 247.932182
             if unit == 'MRLA': value = 12.396608
             if unit == 'ARES': value = 2.470496
+            if unit == 'CENT' : value = 1
             area_converted = area_non_standard * value
             converted[record.id]= area_converted
         return converted

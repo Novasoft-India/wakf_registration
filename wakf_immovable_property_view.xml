@@ -13,9 +13,10 @@
                         <field name="survey_no"/>
                         <field name="area"/>
                         <field name="units_id"/>
-                        <field name="converted_area"/>
+                        <field name="converted_area" sum="Total Amount"/>
                         <field name="location_boundaries"/>
                         <field name="district_id"/>
+                        
                     </tree>
                 </field>
             </record>
