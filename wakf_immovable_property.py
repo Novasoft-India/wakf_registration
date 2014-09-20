@@ -3,7 +3,7 @@ from openerp.osv import fields
 
 class wakf_immovableproperty(osv.osv):
     """
-         Open ERP Model
+         Open ERP Model for immovableproperty
     """
     _name = 'wakf.immovableproperty'
     _description = 'wakf.immovableproperty'
