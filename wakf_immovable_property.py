@@ -57,7 +57,7 @@ class wakf_immovableproperty(osv.osv):
             'district_id':fields.many2one('wakf.district','District',ondelete='set null'),
             'taluk_id':fields.many2one('wakf.taluk','Taluk',ondelete='set null'),
             'village_id':fields.many2one('wakf.village','Village',ondelete='set null'), 
-            'converted_area':fields.function(get_convert,string='Area in Cent',store=True,type='float',method=False),
+            'converted_area':fields.function(get_convert,string='Area in Cent',store=False,type='float',method=False),
         }
 wakf_immovableproperty()
 
