@@ -7,3 +7,4 @@ import wakf_types
 import sws_registration
 import sws_criteria
 import sws_scholar_criteria
+import scholar_sanction_criteria

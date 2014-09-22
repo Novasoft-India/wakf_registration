@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+    	
+            
+            <record model="ir.ui.view" id="sws_scholar_sanction_criteria_tree_view">
+                <field name="name">SWS Scholarship Criteria.tree</field>
+                <field name="model">sws.scholar.sanction.criteria</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                    <tree string="sws criteria tree" version="7.0">
+                        <field name="name"/>
+                        <field name="criteria_no"/>
+                        <field name="active_is"/>
+                        <field name="date_valid"/>
+                    </tree>
+                </field>
+            </record>
+
+            <record model="ir.ui.view" id="sws_scholar_sanction_criteria_form_view">
+                <field name="name">SWS Scholarship Criteria.form</field>
+                <field name="model">sws.scholar.sanction.criteria</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                    <form string="sws criteria form" version="7.0">
+                    	<sheet>
+                    		<group>
+                    			<group>
+			                        <field name="name" select="1"/>
+			                        <field name="criteria_no"/>
+		                        </group>
+		                        <group>
+			                        <field name="active_is"/>
+			                        <field name="date_valid"/>
+                    			</group>
+                    		</group>
+                    		<notebook colspan="4">
+                        	<page string="Scholarship Criteria Lines">
+                        		<field name="criteria_line_id" nolabel="1" widget="one2many_list">
+							 	 	<tree string="SWS Scholarship Sanction Criteria Line" editable="bottom">
+							 	 		<field name="category_course"/>
+							 	 		<field name="amount_sanction"/>
+							 	 		<field name="amount_per_year"/>
+							 	 		<field name="total_year"/>                        				
+                        			</tree>
+                        		</field>
+                        	</page>
+                        	</notebook>
+                    	</sheet>
+                    </form>
+                </field>
+            </record>
+
+            <record model="ir.actions.act_window" id="action_sws_scholar_sanction_criteria_tree_view">
+                <field name="name">SWS Scholarship Criteria</field>
+                <field name="type">ir.actions.act_window</field>
+                <field name="res_model">sws.scholar.sanction.criteria</field>
+		   <!-- <field name="domain">[('field_name','condition',criteria)]</field>-->
+                <field name="view_type">form</field>
+                <field name="view_mode">tree,form</field>
+                <field name="view_id" ref="sws_scholar_sanction_criteria_tree_view"/>
+            </record>
+
+			<menuitem id="sws_scholar_criteria_criteria_menu" name="Scholarship Sanction Criteria" parent="sws_sub_head" sequence="3" action="action_sws_scholar_sanction_criteria_tree_view"/>
+
+    
+    </data>
+</openerp>
