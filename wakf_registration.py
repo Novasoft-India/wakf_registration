@@ -516,7 +516,7 @@ class wakf_registration(osv.osv):
             
             search_ids = self.pool.get('account.journal').search(cr,uid,[('name','=',"Purchase Journal")])
             if not search_ids:
-                raise osv.except_osv(_('Warning!'), _('Please create "Purchase Journal" First'))
+                raise osv.except_osv(_('Warning!'), _('Please create "SWS Journal" First'))
             journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
             ##############################################################################
             self.pool.get('account.invoice').create(cr,uid,{'key':"pension",'head':head,'for_month':month,'year':year,'amount':price_unit,'journal_type':'purchase','type':'in_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})   

@@ -1,6 +1,6 @@
 from osv import osv
 from osv import fields
-from tools.translate import _
+
 
 class wakf_immovableproperty(osv.osv):
     """
@@ -15,17 +15,7 @@ class wakf_immovableproperty(osv.osv):
             area_non_standard = record.area
             unit = record.units_id.code
             value=0
-            ################ LookUp Table ################
-            # 1 Acre = 100.01467985501355 Cent
-            # 1 Sq.Feet = 0.002296 Cent
-            # 1 Sq.Metres = 0.024688 Cent
-            # 1 Sq.Yard = 0.020664 Cent
-            # 1 Hectares = 247.1363878343195 Cent
-            # 1 Kottah = 1.65311998677504 Cent
-            # 1 Kanal = 247.93218242767915 Cent
-            # 1 Marla = 12.396608987519919 Cent
-            # 1 Ares = 2.4704960000259897 Cent
-            ##############################################
+           
             if unit == 'ACRE': value = 100.01467
             if unit == 'SQFT': value = 0.002296
             if unit == 'SQMT': value = 0.024688
@@ -35,7 +25,7 @@ class wakf_immovableproperty(osv.osv):
             if unit == 'KANL': value = 247.932182
             if unit == 'MRLA': value = 12.396608
             if unit == 'ARES': value = 2.470496
-            if unit == 'CENT' : value = 1
+            if unit == 'CENT' : value = 1.00
             area_converted = area_non_standard * value
             converted[record.id]= area_converted
         return converted
