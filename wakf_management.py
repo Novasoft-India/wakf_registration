@@ -41,26 +41,22 @@ class wakf_management(osv.osv):
         return context.get('active_id', False)
  
     _columns = {
-            'wakf_id':fields.many2one('res.partner','Wakf Name',ondelete='set null'),
-            #'wakf_reg_no':fields.char('Reg No:',ondelete='set null'),             
+            'wakf_id':fields.many2one('res.partner','Wakf Name',ondelete='set null'),           
             'name':fields.selection([('muthavalli','Muthavalli'),('mangement','Management Committee'),('kswb','State Waqf Board')],'Managed by'),
             'name_waquif':fields.char('Waquif Name', size=128, required=False),
             'name_father':fields.char('Waquif Father Name', size=128, required=False),
             'details_waquif':fields.text('Managing Committee Address ',required=False),
-            #'management_id':fields.many2one('wakf.managedby','Property Managed By',ondelete='set null'),
             'from_date':fields.date('Committee Approved Date',required=False),
             'to_date':fields.date('Expired Date',required=False),
             'name_member':fields.char('Member Name', size=64, required=False),
-            #'addr_sec':fields.text('Secretary Address', size=128, required=False),
             'name_presi':fields.char('President Name', size=64, required=False),
-            #'addr_presi':fields.text('President Address', size=128, required=False),
             'managedby_address':fields.text('Managing Committee Address',required=False),
-            #'district_id':fields.many2one('wakf.district','District',ondelete='set null'),
-            #'taluk_id':fields.many2one('wakf.taluk','Taluk',ondelete='set null'),
-            #'village_id':fields.many2one('wakf.village','Village',ondelete='set null'),
             'name_city':fields.char('City', size=64, required=False),
-            
+            'company_id': fields.many2one('res.company', 'Company', required=False)
         }
+    _defaults = {
+            'company_id': lambda self,cr,uid,ctx: self.pool['res.company']._company_default_get(cr,uid,object='wakf.management',context=ctx)
+                 }
 
 wakf_management()
 

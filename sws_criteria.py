@@ -2,7 +2,7 @@ from osv import osv
 from osv import fields
 from tools.translate import _
 
-class SWS_Criteria(osv.osv):
+class sws_criteria(osv.osv):
  
     _name = 'sws.criteria'
     _description = 'sws.criteria'
@@ -13,11 +13,14 @@ class SWS_Criteria(osv.osv):
             'active_is':fields.boolean('Active',required=False),
             'date_valid':fields.date('Date valid From',required=False),
             'criteria_line_id':fields.one2many('sws.criteria.line','criteria_id'),  
-            
+            'company_id': fields.many2one('res.company', 'Company', required=False)
                 }
-SWS_Criteria()
+    _defaults = {
+            'company_id': lambda self,cr,uid,ctx: self.pool['res.company']._company_default_get(cr,uid,object='sws.scholar.sanction.criteria',context=ctx)
+                 }
+sws_criteria()
 
-class SWS_Criteria_line(osv.osv):
+class sws_criteria_line(osv.osv):
  
     _name = 'sws.criteria.line'
     _description = 'sws.criteria.line'
@@ -31,4 +34,4 @@ class SWS_Criteria_line(osv.osv):
             'criteria_id':fields.many2one('sws.criteria','Category', required=False),   
             
                 }
-SWS_Criteria_line()
+sws_criteria_line()

@@ -2,7 +2,7 @@ from osv import osv
 from osv import fields
 from tools.translate import _
 
-class SWS_Scholar_Criteria(osv.osv):
+class sws_scholar_criteria(osv.osv):
  
     _name = 'sws.scholar.criteria'
     _description = 'sws.scholar.criteria'
@@ -13,11 +13,14 @@ class SWS_Scholar_Criteria(osv.osv):
             'active_is':fields.boolean('Active',required=False),
             'date_valid':fields.date('Date valid From',required=False),
             'criteria_line_id':fields.one2many('sws.scholar.criteria.line','criteria1_id'),  
-            
+            'company_id': fields.many2one('res.company', 'Company', required=False),
                 }
-SWS_Scholar_Criteria()
+    _defaults = {
+            'company_id': lambda self,cr,uid,ctx: self.pool['res.company']._company_default_get(cr,uid,object='sws.scholar.criteria',context=ctx)
+                 }
+sws_scholar_criteria()
 
-class SWS_Scholar_Criteria_line(osv.osv):
+class sws_scholar_criteria_line(osv.osv):
  
     _name = 'sws.scholar.criteria.line'
     _description = 'sws.scholar.criteria.line'
@@ -29,9 +32,9 @@ class SWS_Scholar_Criteria_line(osv.osv):
             'criteria1_id':fields.many2one('sws.scholar.criteria','Category', required=False),   
             
                 }
-SWS_Scholar_Criteria_line()
+sws_scholar_criteria_line()
 
-class SWS_Scholar_Cource(osv.osv):
+class sws_scholar_cource(osv.osv):  
  
     _name = 'sws.scholar.criteria.course'
     _description = 'sws.scholar.criteria.course'
@@ -43,9 +46,9 @@ class SWS_Scholar_Cource(osv.osv):
                 
                 }
     
-SWS_Scholar_Cource()
+sws_scholar_cource()
 
-class SWS_Scholar_Qualification(osv.osv):
+class sws_scholar_qualification(osv.osv):
  
     _name = 'sws.scholar.criteria.qualification'
     _description = 'sws.scholar.criteria.qualification'
@@ -56,4 +59,4 @@ class SWS_Scholar_Qualification(osv.osv):
                 'qualification_id':fields.one2many('sws.category.education','qualification'),
                 }
     
-SWS_Scholar_Qualification()
+sws_scholar_qualification()

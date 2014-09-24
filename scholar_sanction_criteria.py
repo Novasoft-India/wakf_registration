@@ -2,7 +2,7 @@ from osv import osv
 from osv import fields
 from tools.translate import _
 
-class SWS_Scholar_sanction_Criteria(osv.osv):
+class sws_scholar_sanction_criteria(osv.osv):
  
     _name = 'sws.scholar.sanction.criteria'
     _description = 'sws.scholar.sanction.criteria'
@@ -13,11 +13,15 @@ class SWS_Scholar_sanction_Criteria(osv.osv):
             'active_is':fields.boolean('Active',required=False),
             'date_valid':fields.date('Date valid From',required=False),
             'criteria_line_id':fields.one2many('sws.scholar.sanction.criteria.line','criteria1_id'),  
-            
+            'company_id': fields.many2one('res.company', 'Company', required=False)
                 }
-SWS_Scholar_sanction_Criteria()
+    _defaults = {
+            'company_id': lambda self,cr,uid,ctx: self.pool['res.company']._company_default_get(cr,uid,object='sws.scholar.sanction.criteria',context=ctx)
+                 }
+sws_scholar_sanction_criteria()
 
-class SWS_Scholar_sanction_Criteria_line(osv.osv):
+
+class sws_scholar_sanction_criteria_line(osv.osv):
  
     _name = 'sws.scholar.sanction.criteria.line'
     _description = 'sws.scholar.sanction.criteria.line'
@@ -30,4 +34,4 @@ class SWS_Scholar_sanction_Criteria_line(osv.osv):
             'criteria1_id':fields.many2one('sws.scholar.sanction.criteria','Line of Sanction Criteria')   
             
                 }
-SWS_Scholar_sanction_Criteria_line()
+sws_scholar_sanction_criteria_line()

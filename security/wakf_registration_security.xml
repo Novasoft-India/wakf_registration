@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <openerp>
+    <data noupdate="0">
+    <record model="ir.module.category" id="module_category_wakf_sws_management">
+     <field name="name">WAKF SWS Management</field>
+      <field name="description">Helps you manage SWS.</field> 
+      <field name="sequence">5</field>
+      </record>
+      
+     <record model="ir.module.category" id="module_category_wakf_registration_management">
+     <field name="name">WAKF Registration</field>
+      <field name="description">Helps you manage wakf Registration.</field>
+      <field name="sequence">6</field>
+      </record>
+
+<!-- =======================================  SWS Non Updates ========================================= -->
+<!-- ========================================================================================================= -->
+<record id="group_sws_submit" model="res.groups">
+ <field name="name">Can Submit Application</field> 
+ <field name="category_id" ref="module_category_wakf_sws_management"/> 
+ <field name="implied_ids" eval="[(4, ref('base.group_sale_manager'))]"/>
+ <field name="users" eval="[(4, ref('base.user_root'))]"/>
+ <field name="comment">The user will be able to submit Application.</field>
+  </record> 
+  
+  <record id="group_sws_sanction" model="res.groups">
+   <field name="name">Can Verify Applications</field>
+   <field name="category_id" ref="module_category_wakf_sws_management"/>
+   <field name="implied_ids" eval="[(4, ref('group_sws_submit'))]"/>
+   <field name="comment">The user will be able to verify application</field> 
+ </record>
+ 
+  <record id="group_cancel_application" model="res.groups">
+    <field name="name">Can cancel Application</field> 
+    <field name="category_id" ref="module_category_wakf_sws_management"/> 
+	<field name="implied_ids" eval="[(4, ref('group_sws_submit'))]"/>
+    <field name="comment">The user will be able to cancel application.</field> 
+     </record> 
+
+     
+    <!-- =======================================  Wakf Registration Updates ========================================= -->
+   <record id="group_wakf_registration" model="res.groups">
+	 <field name="name">Can Register a wakf</field> 
+	 <field name="category_id" ref="module_category_wakf_registration_management"/>
+	  <field name="implied_ids" eval="[(4, ref('base.group_sale_manager'))]"/>
+     <field name="users" eval="[(4, ref('base.user_root'))]"/>
+	 <field name="comment">The user will be able to register a wakf</field>
+   </record> 
+   
+   <record id="group_registration_delete" model="res.groups">
+	 <field name="name">Can delete a wakf</field> 
+	 <field name="category_id" ref="module_category_wakf_registration_management"/> 
+	 <field name="implied_ids" eval="[(4, ref('base.group_sale_manager'))]"/>
+	 <field name="comment">The user will be able to delete a wakf.</field>
+	</record> 
+	
+   </data>
+     <!-- ======================================================================================================== -->
+   <!-- =======================================  Registration Updates ========================================= -->
+   <!-- ========================================================================================================== -->
+    
+    
+    <data noupdate="1">
+      
+    <record id="scholarship_sanction_criteria_comp_rule" model="ir.rule">
+        <field name="name">SWS Scholar sanction criteria</field>
+        <field name="model_id" ref="model_sws_scholar_sanction_criteria"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+    </record>
+  
+    <record id="sws_criteria_comp_rule" model="ir.rule">
+        <field name="name">SWS criteria</field>
+        <field name="model_id" ref="model_sws_criteria"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+    </record>
+
+    <record id="sws_registration_comp_rule" model="ir.rule">
+        <field name="name">SWS registration Rule</field>
+        <field name="model_id" ref="model_sws_registration"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+    </record>
+  
+    <record id="scholar_criteria_rule" model="ir.rule">
+        <field name="name">Scholar Criteria Rule</field>
+        <field name="model_id" ref="model_sws_scholar_criteria"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+    </record>
+ 
+    
+    
+    </data>
+</openerp>

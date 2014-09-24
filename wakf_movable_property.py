@@ -21,9 +21,12 @@ class wakf_movableproperty(osv.osv):
             'location_property':fields.text('Location',required=True),
             'property_additional_details':fields.text('Additional Info',required=False),
             'property_remarks':fields.text('Remarks',required=False),
-            
+            'company_id': fields.many2one('res.company', 'Company', required=False)
             
         }
+    _defaults = {
+            'company_id': lambda self,cr,uid,ctx: self.pool['res.company']._company_default_get(cr,uid,object='wakf.movableproperty',context=ctx)
+                 }
 wakf_movableproperty()
 
 

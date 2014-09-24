@@ -8,7 +8,9 @@
     
     """,
     'website': 'http://www.novasoftindia.com',
-    'data': ['sws_scholar_criteria.xml',
+    'data': ['security/wakf_registration_security.xml',
+             'security/ir.model.access.csv',
+             'sws_scholar_criteria.xml',
              'wakf_registration_view.xml',
              'wakf_immovable_property_view.xml',
              'wakf_location_view.xml',
