@@ -58,7 +58,12 @@ class wakf_immovableproperty(osv.osv):
             'taluk_id':fields.many2one('wakf.taluk','Taluk',ondelete='set null'),
             'village_id':fields.many2one('wakf.village','Village',ondelete='set null'), 
             'converted_area':fields.function(get_convert,string='Area in Cent',store=False,type='float',method=False),
+            'company_id': fields.many2one('res.company', 'Company', required=False)
         }
+    _defaults = {
+            'company_id': lambda self,cr,uid,ctx: self.pool['res.company']._company_default_get(cr,uid,object='wakf.immovableproperty',context=ctx)
+
+                 }
 wakf_immovableproperty()
 
 class wakf_landtype(osv.osv):

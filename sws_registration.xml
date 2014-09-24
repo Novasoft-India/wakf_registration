@@ -421,11 +421,11 @@
 			</field>
 		</record>
 		<!-- ====================================== SWS Action Menus ======================================= -->		
-		<menuitem id="sws_main_menu" name="SWS" parent="" />	
+		<menuitem id="sws_main_menu" name="SWS" parent="" groups="wakf_registration.group_sws_submit"/>	
 		
 	
 		<!-- ======================================  Sub Menus ======================================= -->		
-			<menuitem id="sws_sub_head" name="SWS Registration" parent="sws_main_menu" />
+			<menuitem id="sws_sub_head" name="SWS Registration" parent="sws_main_menu" groups="wakf_registration.group_sws_submit"/>
 			
 		
 	   
