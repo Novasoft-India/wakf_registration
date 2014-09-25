@@ -108,7 +108,7 @@
 			                        <field name="taluk_id" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
 			                        <field name="district_sws_id" attrs="{'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
 			                        <field name="reg_no" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}" on_change="on_change_wakf_regno_to_name(reg_no)"/>
-			                        <field name="wakf_id" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
+			                        <field name="wakf_id" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['submitted','verified','approved','sanctioned','rejected'])]}" on_change="on_change_wakf_name1_to_regno(wakf_id)"/>
 			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected'])]}" name="meeting_place"/>
 			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned']),('categ_name','=','Education Loan')],'invisible':['|',('state1','not in',['verified','approved','sanctioned']),('categ_name','!=','Education Loan')],'readonly':[('state1','in',['approved','sanctioned','rejected'])]}" name="course_end"/>
 			                        
@@ -116,7 +116,13 @@
                        			<group  attrs="{'invisible':['|',('is_person', '!=', True),('state1', 'not in',['approved','sanctioned','re_payment','paid','revolving','finished'])]}" string="Sanction Details">
                        				<field attrs="{'required':[('state1','in',['approved','sanctioned'])],'readonly':[('state1','in',['paid','finished','revolving'])]}" name="amount_sanction"/>
                        				<field name="sanction_details" attrs="{'readonly':[('state1','in',['sanctioned','rejected','re_payment','paid','finished','revolving'])]}"/>
-                       				<field name="date_sanction" attrs="{'readonly':[('state1','in',['sanctioned','rejected','re_payment','paid','finished','revolving'])]}"/>
+                       				<field name="date_sanction" attrs="{'required':[('state1','in',['approved','sanctioned'])],'readonly':[('state1','in',['sanctioned','rejected','re_payment','paid','finished','revolving'])]}"/>
+                       			</group>
+                       			<group  attrs="{'invisible':['|','|',('categ_name','!=','Pension'),('is_person', '!=', True),('state1', 'not in',['sanctioned','re_payment','paid','revolving','finished'])]}" string="Finish Cycle">
+                       				<field attrs="{'readonly':[('state1','in',['paid','finished'])]}" name="finish_pension"/>
+                       				<field name="reason" attrs="{'readonly':[('state1','in',['rejected','re_payment','paid','finished'])]}"/>
+                       				<field name="date_death" attrs="{'readonly':[('state1','in',['rejected','re_payment','paid','finished'])]}"/>
+                       				<button name="action_stop_pension" string="Stop Pension" type="object" icon="gtk-goto-last"/>
                        			</group>
                        			<!--  
                        			<group  attrs="{'invisible':['|',('is_person', '!=', True),('state1', 'not in',['re_payment','paid','revolving','finished'])]}" string="Return Details">
@@ -126,7 +132,7 @@
                        			-->
                  </xpath>
                         
-                  <xpath expr="//page[@string='Sales &amp; Purchases']" position="attributes" >
+                  <xpath expr="//page[@string='Sales &amp; Purchases']" position="attributes">
     					<attribute name="invisible">1</attribute>
 				 </xpath>
 				 
@@ -199,8 +205,8 @@
 				                        	<page string="Experience Lines">
 				                        		<field name="exp_line_id" nolabel="1" widget="one2many_list">
 											 	 	<tree string="Experience Lines" editable="bottom">
-											 	 		<field name="partner_id"/>
 											 	 		<field name="reg_no" on_change="on_change_wakf_regno_to_name(reg_no)"/>
+											 	 		<field name="partner_id" on_change="on_change_wakf_name_to_regno(partner_id)"/>
 											 	 		<field name="experience_from"/>
 											 	 		<field name="experience_to" on_change="on_change_Work_Exp_from(experience_from,experience_to)"/>
 														<field name="total_year"/>
@@ -504,8 +510,9 @@
                         		<field name="history_transaction" nolabel="1" edit="False" delete="False">
                         			<tree string="Transactions">	    
 					                        <field name="year"/>
+					                        <field name="date_sanction"/>
 					                        <field name="for_month"/>
-					                        <field name="amount"/>
+					                        <field name="amount" sum="Total Amount"/>
 					                        <field name="dd_no"/>
 					                        <field name="transaction_no"/>
 					                        <field name="status"/>
