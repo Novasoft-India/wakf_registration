@@ -1,361 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-    	  
-            
-            <record model="ir.ui.view" id="sws_registration_tree_view">
-                <field name="name">sws.registration.tree</field>
-                <field name="model">sws.registration</field>
-                <field name="type">tree</field>
-                <field name="arch" type="xml">
-                    <tree string="SWS Tree" version="7.0">
-                        <field name="appli_no"/>
-                        <field name="category"/>
-                        <field name="appli_date"/>
-                        <field name="full_name"/>
-                        <field name="address"/>
-                        <field name="tick_same"/>
-                    </tree>
-                </field>
-            </record>
-
-            <record model="ir.ui.view" id="sws_registration_form_view">
-                <field name="name">sws.registration.form</field>
-                <field name="model">sws.registration</field>
-                <field name="type">form</field>
-                <field name="arch" type="xml">
-                    <form string="SWS Form" version="7.0">
-                    <sheet>
-                    <group>
-                       <group>
-                        <field name="appli_no" select="1"/>
-                        <field name="category"/>
-                        <field name="appli_date"/>
-                        <field name="full_name"/>
-                        <field name="address"/>
-                        <field name="tick_same"/>
-                        <field name="comm_address"/>
-                        
-                       </group>
-                       <group>
-                        <field name="village"/>
-                        <field name="panchayath"/>
-                        <field name="taluk_id"/>
-                        <field name="district_id"/>
-                        <field name="reg_no"/>
-                        <field name="wakf_id"/>
-                       </group>
-                    </group>
-                        <notebook colspan="4">
-                        	<page string="Pension" attrs="{'invisible':[('category', '!=', 'pension')]}">
-                        		<field name="sws_pension_id" nolabel="1">
-                        			<tree string="Pension Details">
-                        				<field name="date_of_birth"/>
-                        				<field name="age"/>
-                        				<field name="qualification"/>
-                        					
-                        			</tree>
-                        			<form>
-                        			    <group>
-	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
-	                        				<field name="age"/>years
-	                        				<field name="month"/>
-	                        				<field name="days"/>
-	                        				<field name="qualification"/>
-	                        				<field name="job_details"/>
-	                        				<field name="job_income"/>
-	                        				<field name="body_marks"/>
-                        				</group>
-                        				<group>
-	                        				<field name="other_income"/>
-	                        				<field name="total_annual_income"/>
-	                        				<field name="experience_from"/>
-	                        				<field name="experience_to"/>
-	                        				
-	                        				<field name="mahal_details"/>
-	                        				<field name="benefits"/>
-                        				</group>
-                        			</form>
-                        		</field>
-                        	</page>
-                        	
-                        	<page string="Education" attrs="{'invisible':[('category', '!=', 'education')]}">
-                        		<field name="sws_education_id" nolabel="1">
-                        			<tree string="Education Details">
-                        				<field name="course_name"/>
-                        				<field name="qualification"/>
-                        				<field name="qualifying_mark"/>
-                        				<field name="qualifying_percentage"/>		
-                        			</tree>
-                        			<form>
-                        			    <group>
-	                        				<field name="course_name"/>
-	                        				<field name="qualification"/>
-	                        				<field name="qualifying_mark"/>
-	                        				<field name="qualifying_percentage"/>
-	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
-	                        				<field name="age"/>
-	                        				
-                        				</group>
-                        				<group>
-	                        				<field name="total_annual_income"/>
-	                        				<field name="institution_name"/>
-	                        				<field name="institution_addr"/>
-                        				</group>
-                        			</form>
-                        		</field>
-                        	</page>
-                        	
-                        	<page string="Orphans" attrs="{'invisible':[('category', '!=', 'orphans')]}">
-                        		<field name="sws_orphans_id" nolabel="1">
-                        			<tree string="Orphans Details">
-                        				<field name="job_name"/>
-                        				<field name="income"/>
-                        				<field name="date_of_birth"/>
-                        				<field name="age"/>		
-                        			</tree>
-                        			<form>
-                        			    <group>
-	                        				<field name="job_name"/>
-	                        				<field name="income"/>
-	                        				<field name="other_income"/>
-	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
-	                           				<field name="age"/>
-	                           				<field name="month"/>
-	                           				<field name="days"/>
-				
-                        				</group>
-                        				<group>
-	                        				<field name="ben_wakf"/>
-	                           				<field name="check_required"/>
-                        				</group>
-                        			</form>
-                        		</field>
-                        	</page>
-                       	
-                        	<page string="Firms" attrs="{'invisible':[('category', '!=', 'firms')]}">
-                        		<field name="sws_firms_id" nolabel="1">
-                        			<tree string="Firms Details">
-                        				<field name="reg_no"/>
-                        				<field name="wakf_name"/>
-                        				<field name="name_firm"/>
-                        				<field name="designation"/>		
-                        			</tree>
-                        			<form>
-                        			    <group>
-	                        				<field name="reg_no"/>
-	                        				<field name="wakf_name"/>
-	                        				<field name="name_firm"/>
-	                        				<field name="designation"/>
-	                           				<field name="financial_status"/>
-	                           
-                        				</group>
-                        				<group>
-	                        				<field name="objectives"/>
-	                           				<field name="objectives_fund"/>
-                        				</group>
-                        			</form>
-                        		</field>
-                        	</page>
-                        	
-                        	<page string="Widow" attrs="{'invisible':[('category', '!=', 'window')]}">
-                        		<field name="sws_widow_id" nolabel="1">
-                        			<tree string="Widow Details">
-                        				<field name="job_name"/>
-                        				<field name="income"/>
-                        				<field name="date_of_birth"/>
-                        				<field name="age"/>		
-                        			</tree>
-                        			<form>
-                        			    <group>
-	                        				<field name="job_name"/>
-	                        				<field name="income"/>
-	                        				<field name="other_income"/>
-	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
-	                           				<field name="age"/>
-	                           				<field name="month"/>
-	                           				<field name="days"/>
-				
-                        				</group>
-                        				<group>
-	                        				<field name="ben_wakf"/>
-	                           				<field name="check_required"/>
-                        				</group>
-                        			</form>
-                        		</field>
-                        	</page>
-                         	
-                        	<page string="Marriage" attrs="{'invisible':[('category', '!=', 'marriage')]}">
-                        		<field name="sws_marriage_id" nolabel="1">
-                        			<tree string="Marriage Details">
-                        				<field name="job_name"/>
-                        				<field name="income"/>
-                        				<field name="date_of_birth"/>
-                        				<field name="age"/>		
-                        			</tree>
-                        			<form>
-                        			    <group>
-	                        				<field name="job_name"/>
-	                        				<field name="income"/>
-	                        				<field name="other_income"/>
-	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
-	                           				<field name="age"/>
-	                           				<field name="month"/>
-	                           				<field name="days"/>
-				
-                        				</group>
-                        				<group>
-	                        				<field name="ben_wakf"/>
-	                           				<field name="check_required"/>
-	                           				<field name="date_marriage"/>
-	                           				<field name="guardian_name"/>
-                        				</group>
-                        			</form>
-                        		</field>
-                        	</page>
-                        	
-                        	<page string="Disease" attrs="{'invisible':[('category', '!=', 'disease')]}">
-                        		<field name="sws_disease_id" nolabel="1">
-                        			<tree string="Disease Details">
-                        				<field name="job_name"/>
-                        				<field name="income"/>
-                        				<field name="date_of_birth"/>
-                        				<field name="age"/>		
-                        			</tree>
-                        			<form>
-                        			    <group>
-	                        				<field name="job_name"/>
-	                        				<field name="income"/>
-	                        				<field name="other_income"/>
-	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
-	                           				<field name="age"/>
-	                           				<field name="month"/>
-	                           				<field name="days"/>
-				
-                        				</group>
-                        				<group>
-	                        				<field name="ben_wakf"/>
-	                           				<field name="check_required"/>
-	                           				<field name="disease"/>
-	                           				<field name="guardian_name"/>
-                        				</group>
-                        			</form>
-                        		</field>
-                        	</page>
-                     
-                        	<page string="Maintenance" attrs="{'invisible':[('category', '!=', 'maintenance')]}">
-                        		<field name="sws_maintenance_id" nolabel="1">
-                        			<tree string="Maintenance Details">
-                        				<field name="job_name"/>
-                        				<field name="income"/>
-                        				<field name="date_of_birth"/>
-                        				<field name="age"/>		
-                        			</tree>
-                        			<form>
-                        			    <group>
-	                        				<field name="job_name"/>
-	                        				<field name="income"/>
-	                        				<field name="other_income"/>
-	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
-	                           				<field name="age"/>
-	                           				<field name="month"/>
-	                           				<field name="days"/>
-				
-                        				</group>
-                        				<group>
-	                        				<field name="ben_wakf"/>
-	                           				<field name="check_required"/>
-	              
-                        				</group>
-                        			</form>
-                        		</field>
-                        	</page>
-                         	
-                        	<page string="Handicapped" attrs="{'invisible':[('category', '!=', 'handicapped')]}">
-                        		<field name="sws_handicapped_id" nolabel="1">
-                        			<tree string="Handicapped Details">
-                        				<field name="job_name"/>
-                        				<field name="income"/>
-                        				<field name="date_of_birth"/>
-                        				<field name="age"/>		
-                        			</tree>
-                        			<form>
-                        			    <group>
-	                        				<field name="job_name"/>
-	                        				<field name="income"/>
-	                        				<field name="other_income"/>
-	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
-	                           				<field name="age"/>
-	                           				<field name="month"/>
-	                           				<field name="days"/>
-				        
-                        				</group>
-                        				<group>
-	                        				<field name="ben_wakf"/>
-	                           				<field name="check_required"/>
-                        				</group>
-                        			</form>
-                        		</field>
-                        	</page>
-                        	
-                        	<page string="Destitute" attrs="{'invisible':[('category', '!=', 'destitute')]}">
-                        		<field name="sws_destitute_id" nolabel="1">
-                        			<tree string="Destitute Details">
-                        				<field name="job_name"/>
-                        				<field name="income"/>
-                        				<field name="date_of_birth"/>
-                        				<field name="age"/>		
-                        			</tree>
-                        			<form>
-                        			    <group>
-	                        				<field name="job_name"/>
-	                        				<field name="income"/>
-	                        				<field name="other_income"/>
-	                        				<field name="date_of_birth" on_change="on_change_DOB(date_of_birth)"/>
-	                           				<field name="age"/>
-	                           				<field name="month"/>
-	                           				<field name="days"/>
-				
-                        				</group>
-                        				<group>
-	                        				<field name="ben_wakf"/>
-	                           				<field name="check_required"/>
-                        				</group>
-                        			</form>
-                        		</field>
-                        	</page>
-                        	 
-                        </notebook>
-                      <!--   		  
-                        <field name="sws_pension_id"/>
-                        <field name="sws_education_id"/>
-                        <field name="sws_orphans_id"/>
-                        <field name="sws_firms_id"/>
-                        <field name="sws_widow_id"/>
-                        <field name="sws_marriage_id"/>
-                        <field name="sws_disease_id"/>
-                        <field name="sws_maintenance_id"/>
-                        <field name="sws_handicapped_id"/>
-                        <field name="sws_destitute_id"/>-->
-                        </sheet>
-                    </form>
-                </field>
-            </record>
-
-            <record model="ir.actions.act_window" id="action_sws_registration_tree_view">
-                <field name="name">sws.registration</field>
-                <field name="type">ir.actions.act_window</field>
-                <field name="res_model">sws.registration</field>
-		   <!-- <field name="domain">[('field_name','condition',criteria)]</field>-->
-                <field name="view_type">form</field>
-                <field name="view_mode">tree,form</field>
-                <field name="view_id" ref="sws_registration_tree_view"/>
-            </record>
-<!-- 
-			<menuitem id="sws_registration_menu" name="sws.registration" parent="assessment1_window_menu" action="action_sws_registration_tree_view"/>
-			
-	 -->		
-            
+    	 <!-- ===================================  POP UP CANCEL XML ==================================== -->
+    	 <!-- =========================================================================================== -->     
+    	    
             <record model="ir.ui.view" id="pop_up_cancel_tree_view">
                 <field name="name">pop.up.cancel.tree</field>
                 <field name="model">pop.up.cancel</field>
@@ -401,7 +49,80 @@
                 <field name="view_mode">tree,form</field>
                 <field name="view_id" ref="pop_up_cancel_tree_view"/>
             </record>
+         <!-- ============================================================================================== -->
+         <!-- ========================================  PENSION CYCLE VIEW ================================= -->
+         <!-- =============================================================================================== -->
+         <record model="ir.ui.view" id="pensioncycle_tree_view">
+                <field name="name">pensioncycle.tree</field>
+                <field name="model">pension.cycle</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                    <tree string="tree_string" version="7.0">
+                        <field name="date_today"/>
+                        <field name="date_upto"/>
+                        <field name="maximum_amount"/>
+                        <field name="actual_amount"/>
+                    </tree>
+                </field>
+            </record>
+
+            <record model="ir.ui.view" id="pensioncycle_form_view">
+                <field name="name">Pension Cycle</field>
+                <field name="model">pension.cycle</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                    <form string="form_string" version="7.0">
+                    	<sheet>
+                    		<group>
+                    			<group>
+                    				<field name="date_today" select="1"/>
+                    				<field name="date_upto"/>
+                    				<field name="test"/>
+                    			</group>
+                    			<group>
+                    				<field name="maximum_amount"/>
+                        			<field name="actual_amount"/>
+                        			<field name="balance_amount"/>
+                        			<button name="button_update" string="Update" type="object" icon="gtk-go-forward"/>
+                        			<button name="button_allocate" string="Allocate" type="object" icon="gtk-goto-last"/>
+                    			</group>
+                    		</group>
+                    		<notebook colspan="4">
+                        	<page string="Pension Cycle">
+                        		<field name="pension_line_id" nolabel="1" widget="one2many_list">
+							 	 	<tree string="Pension Cycle Line" editable="bottom">
+							 	 		<field name="application_no"/>
+							 	 		<field name="name_appli"/>
+							 	 		<field name="date_reference"/>
+							 	 		<field name="date_year"/>
+                        				<field name="date_month"/>
+                        				<field name="sanctioned_amount" sum="Total Amount"/>
+                        				<field name="status"/>
+                        				<field name="full_reconcile"/>
+                        			</tree>
+                        		</field>
+                        	</page>
+                        	</notebook>
+                    	</sheet>
+                    </form>
+                </field>
+            </record>
+
+            <record model="ir.actions.act_window" id="action_pensioncycle_tree_view">
+                <field name="name">Pension Cycle</field>
+                <field name="type">ir.actions.act_window</field>
+                <field name="res_model">pension.cycle</field>
+		   <!-- <field name="domain">[('field_name','condition',criteria)]</field>-->
+                <field name="view_type">form</field>
+                <field name="view_mode">tree,form</field>
+                <field name="view_id" ref="pensioncycle_form_view"/>
+            </record>
+
+			<menuitem id="pensioncycle_menu" name="Pension Cycle" parent="sws_sub_head" action="action_pensioncycle_tree_view"/>
+         
             
+         <!-- ====================================== SUPPLIER VIEW INHERIT FOR SWS ========================= -->
+         <!-- ============================================================================================== -->   
           <record id="action_partner_supplier_form_demo" model="ir.actions.act_window">
 			<field name="name">Applicants</field>
 			<field name="type">ir.actions.act_window</field>
@@ -433,5 +154,23 @@
 			<menuitem id="sws_registration" name="Registration" parent="sws_sub_head" sequence="1" action="action_partner_supplier_form_demo"/>
 			<menuitem id="sws_criteria_menu" name="SWS Criteria" parent="sws_sub_head" sequence="2" action="action_sws_criteria_tree_view"/> 
 			<menuitem id="sws_scholar_criteria_menu" name="SWS Scholarship Criteria" parent="sws_sub_head" sequence="3" action="action_sws_scholar_criteria_tree_view"/>
+    		
+    	<!-- =======================================  Scheduler ================================================== -->	
+    		
+    		  <!--  
+    		<record forcecreate="True" id="ir_cron_pension_fine_action" model="ir.cron">
+			  <field name="name">Run Pension Scheduler</field>
+			  <field eval="True" name="active" />
+			  <field name="user_id" ref="base.user_root" />
+			  <field name="interval_number">1</field>
+			  <field name="interval_type">minutes</field>
+			  <field name="numbercall">-1</field>
+			  <field eval="'sws.registration'" name="model" />
+			  <field eval="'action_scheduler_pension'" name="function" />
+			  <field eval="'()'" name="args" />
+			</record> 
+    
+    -->
+    
     </data>
 </openerp>
