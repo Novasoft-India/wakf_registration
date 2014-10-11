@@ -8,6 +8,7 @@ class wakf_immovableproperty(osv.osv):
     """
     _name = 'wakf.immovableproperty'
     _description = 'wakf.immovableproperty'
+    _order = "id desc"
     
     def get_convert(self, cr, uid, ids, fields, arg, context):
         converted = {}

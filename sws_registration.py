@@ -12,6 +12,7 @@ class sws_registration(osv.osv):
  
     _name = 'sws.registration'
     _description = 'sws.registration'
+    _order = "id desc"
     
     def action_scheduler_pension(self, cr, uid, automatic=False, use_new_cursor=False, context=None):
         pension_line = []
