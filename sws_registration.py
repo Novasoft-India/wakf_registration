@@ -12,12 +12,36 @@ class sws_registration(osv.osv):
  
     _name = 'sws.registration'
     _description = 'sws.registration'
+    _order = "id desc"
     
-    def action_scheduler(self, cr, uid, automatic=False, use_new_cursor=False, context=None):
-        invoice_ids = []
-        for rec in self.pool.get('res.partner').browse(cr,uid,[]):
-            id_rec = rec.id
-            self.pool.get('res.partner').update(cr,uid,id_rec,{'state1':'re_payment'})
+    def action_scheduler_pension(self, cr, uid, automatic=False, use_new_cursor=False, context=None):
+        pension_line = []
+        today = date.today()
+        today_copy = today
+        month = today.month
+        year = today.year
+        today = today.strftime("%Y-%m-%d")
+        id_search = self.pool.get('res.partner').search(cr,uid,[('state1','in',['sanctioned','revolving']),('head.name','=',"Pension")])
+        for id_browse in self.pool.get('res.partner').browse(cr,uid,id_search):
+            pension_line = []
+            browse_id = id_browse.id
+            amount = id_browse.amount_sanction
+            date_sanction = id_browse.date_sanction
+            if month == 1: month = 'JAN'
+            if month == 2: month = 'FEB'
+            if month == 3: month = 'MAR'
+            if month == 4: month = 'APR'
+            if month == 5: month = 'MAY'
+            if month == 6: month = 'JUN'
+            if month == 7: month = 'JUL'
+            if month == 8: month = 'AUG'
+            if month == 9: month = 'SEP'
+            if month == 10: month = 'OCT'
+            if month == 11: month = 'NOV'
+            if month == 12: month = 'DEC'
+            if date_sanction <= today:  
+                pension_line.append((0,0,{'date_sanction':today,'status':'pending','for_month':month,'year':year,'amount':amount}))
+                self.pool.get('res.partner').write(cr,uid,id_browse.id,{'state1':'revolving','history_transaction':pension_line})
         return True
  
     _columns = {
@@ -76,8 +100,31 @@ class sws_category_pension(osv.osv):
             similar_objs = id_res_partner.browse(cr, uid, search_ids, context=context)[0]
             if similar_objs:
                 values={'partner_id':similar_objs.id,
+                        'district_sws_id':similar_objs.district_id.id,
                         }
-        return {'value' :values}
+                return {'value' :values}
+            else:
+                values={'partner_id':False,
+                        'district_sws_id':False}
+                return {'value' :False}
+        return {'value' :False}
+    
+    def on_change_wakf_name1_to_regno(self, cr, uid, ids, wakf_id, context=None):
+        values = {}
+        id_res_partner=self.pool.get('res.partner')
+        if wakf_id:
+            similar_objs = id_res_partner.browse(cr, uid, wakf_id, context=context).wakf_reg_no
+            if similar_objs:
+                values={'reg_no':similar_objs,
+                        'district_sws_id':similar_objs.district_id.id,
+                            }
+                return {'value' :values}
+            else:
+                values={'reg_no':False,
+                        'district_sws_id':False
+                            }
+                return {'value' :values}
+        return False
     
     def on_change_DOB(self, cr, uid, ids,dob, context=None):
         age = False
@@ -267,6 +314,16 @@ class sws_category_pension_line(osv.osv):
                 values={'partner_id':similar_objs.id,
                             }
                 return {'value' :values}
+        return False
+    
+    def on_change_wakf_name_to_regno(self, cr, uid, ids, wakf_id, context=None):
+        values = {}
+        id_res_partner=self.pool.get('res.partner')
+        if wakf_id:
+            similar_objs = id_res_partner.browse(cr, uid, wakf_id, context=context).wakf_reg_no
+            values={'reg_no':similar_objs,
+                        }
+            return {'value' :values}
         return False
     
     _columns={
@@ -642,4 +699,164 @@ class pop_up_cancel(osv.osv):
                 
                 }
 pop_up_cancel()
+
+#################################################################################################
+###################################  UPDATES  ###################################################
+class pension_cycle(osv.osv):
+    _name = 'pension.cycle'
+    _description = 'pension.cycle'
+    
+    def _deflt_pending_pensions(self, cr, uid, ids, context=None):
+        pending_list = []
+        date_reference = False
+        for_month = False
+        year = False
+        amount = False
+        status = False
+        for rec in self.browse(cr,uid,ids,context):
+            ################## Finding Order for payment ##############            
+            ###########################################################
+            res_partner_search = self.pool.get('res.partner').search(cr,uid,[('head.name','=','Pension'),('state1','in',['sanctioned','revolving'])])
+            res_partner_browse = self.pool.get('res.partner').browse(cr,uid,res_partner_search)
+            for records in res_partner_browse:
+                name_appli = records.id
+                application_no = records.appli_no
+                head = records.head.id
+                category = records.category.id
+                for line in records.history_transaction:
+                    if line.status == 'pending':
+                        amount = line.amount
+                        year = line.year
+                        for_month = line.for_month
+                        date_reference = line.date_sanction
+                        status = 'Pending'
+                        pending_list.append((0,0,{'category':category,'head':head,'application_no':application_no,'date_reference':date_reference,'name_appli':name_appli,'date_year':year,'date_month':for_month,'sanctioned_amount':amount,'status':status,'full_reconcile':False}))
+            return pending_list
+        
+    def button_update(self, cr, uid, ids, context):
+        total_pending = 0
+        pending_year_list = []
+        return_list = []
+        dummy_list = []
+        dicto = {}
+        granded_amount = 0
+        balance_amount = 0
+        total_reconcile = 0
+        for rec in self.browse(cr,uid,ids):
+            granded_amount = rec.maximum_amount
+            balance_amount = granded_amount
+            for line in rec.pension_line_id:
+                if line.date_reference:
+                    pending_year_list.append(line.date_reference)
+                total_pending = total_pending + line.sanctioned_amount
+            #pending_year_list = pending_year_list.sort()
+            #sorted(pending_year_list)   #### NOW DATES ARE IN ASCENDING ORDER
+            for datas in pending_year_list:
+                for line_in in rec.pension_line_id:
+                    id_test = line_in.id
+                    application_no = line_in.application_no
+                    name_appli = line_in.name_appli.id
+                    date_reference = line_in.date_reference
+                    date_year = line_in.date_year
+                    date_month = line_in.date_month
+                    sanctioned_amount = line_in.sanctioned_amount
+                    status = line_in.status
+                    full_reconcile = line_in.full_reconcile    
+                    if line_in.date_reference: 
+                        if datas == line_in.date_reference:  # Matching Date field with sorted date
+                            amount_single = line_in.sanctioned_amount
+                            if amount_single <= balance_amount:
+                                balance_amount = balance_amount - amount_single
+                                total_reconcile = total_reconcile + amount_single
+                                total_pending = total_pending - amount_single
+                                full_reconcile = True
+                                return_list.append((1, id_test, {'full_reconcile':full_reconcile}))    
+                    id_of = line_in.id                                  ###  Removing Noise in the list
+                    dummy_list.append((1,id_of,{'full_reconcile':False}))
+            self.write(cr,uid,ids,{'pension_line_id':dummy_list})
+            self.write(cr,uid,ids,{'test':pending_year_list,'actual_amount':total_pending,'balance_amount':balance_amount,'pension_line_id':return_list})
+        return True
+    
+    def button_allocate(self, cr, uid, ids, context):
+        invoice_ids = []
+        change_list = []
+        for rec in self.browse(cr,uid,ids,context=context):
+            for line in rec.pension_line_id:
+                invoice_ids = []
+                if line.full_reconcile:
+                    date_sanction = line.date_reference
+                    head = line.head.id
+                    for_month = line.date_month
+                    year = line.date_year
+                    amount = line.sanctioned_amount
+                    appli_no = line.application_no
+                    partner_id = line.name_appli.id
+                    product = line.category.id
+                    name = line.category.name
+                    quantity = 1
+                    price_unit = amount
+                    new_amount = amount
+                    ###############################################################################################
+                    search_ids = self.pool.get('account.account').search(cr,uid,[('name','=',"Accounts Receivable")])
+                    if not search_ids:
+                        raise osv.except_osv(_('Warning!'), _('Please create an account "Accounts Receivable" first'))
+                    account_id = self.pool.get('account.account').browse(cr,uid,search_ids)[0].id
+                    
+                    search_ids = self.pool.get('account.journal').search(cr,uid,[('name','=',"Assessment Journal")])
+                    if not search_ids:
+                        raise osv.except_osv(_('Warning!'), _('Please create "Assessment Journal" First'))
+                    journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
+                    ###############################################################################################
+                    invoice_ids.append((0,0,{'product_id':product,'name':name,'quantity':quantity,'price_unit':price_unit,'new_amount':new_amount,'sws':True}))
+                    self.pool.get('account.invoice').create(cr,uid,{'date_sanction':date_sanction,'key':"pension",'head':head,'for_month':for_month,'year':year,'amount':amount,'journal_type':'purchase','type':'in_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':partner_id,'invoice_line':invoice_ids})   
+                    #################################################################################################
+                    #################################################################################################
+                    search_res = self.pool.get('res.partner').search(cr,uid,[('head.name','=','Pension'),('appli_no','=',appli_no),('id','=',partner_id),('state1','in',['sanctioned','revolving'])])
+                    res_partner_browse = self.pool.get('res.partner').browse(cr,uid,search_res)
+                    for values in res_partner_browse:
+                        id_res = values.id
+                        for line in values.history_transaction:
+                            if line.amount == amount and line.date_sanction == date_sanction and line.status == 'pending':
+                                id_line = line.id
+                                change_list.append((1,id_line,{'status':'invoiced'}))
+                                self.pool.get('res.partner').write(cr,uid,id_res,{'history_transaction':change_list})
+        return True
+        
+    
+    _columns = {
+            'date_today':fields.date('Date of Sanction'),
+            'date_upto':fields.date('Date Upto'),
+            'maximum_amount':fields.float('Granted Amount'),
+            'actual_amount':fields.float('Amount Required to reconcile'),
+            'balance_amount':fields.float('Unreconciled Amount'),
+            'pension_line_id':fields.one2many('pension.cycle.line','cycle_id','Pension Cycle'),
+            'test':fields.text('test'),
+                }
+    _defaults = {
+                 'pension_line_id':_deflt_pending_pensions,
+                 'date_today':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+                 }
+pension_cycle()
+class pension_cycle_line(osv.osv):
+    _name = 'pension.cycle.line'
+    _description = 'pension.cycle.line'
+    _order = "date_reference asc"
+    
+    _columns = {
+            'application_no':fields.char('Application No.'),
+            'name_appli':fields.many2one('res.partner','Name',ondelete='set null'),
+            'head':fields.many2one('product.category','Head',ondelete='set null'),
+            'category':fields.many2one('product.product','Category',ondelete='set null'),
+            'date_reference':fields.date('Due Date'),
+            'date_year':fields.char('Year'),
+            'date_month':fields.char('Month'),
+            'sanctioned_amount':fields.float('Amount'),
+            'status':fields.char('Status'),
+            'full_reconcile':fields.boolean('Full Reconcile'),
+            'cycle_id':fields.many2one('pension.cycle','Cycle of Pension',ondelete='set null'),
+                }
+pension_cycle_line()
+#################################################################################################
+
+
 

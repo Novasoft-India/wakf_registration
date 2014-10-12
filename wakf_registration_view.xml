@@ -33,11 +33,11 @@
     
     	  		<xpath expr="//form[@string='Partners']/sheet" position="before">
     				<header>
-                    	<button name="action_submit" string="Submit" type="object" icon="gtk-go-forward" attrs="{'invisible':['|',('state1','in',('submitted','verified','approved','sanctioned','rejected','re_payment','paid')),('is_person', '!=', True)]}"/>
-                    	<button name="action_verify1" string="Verify" type="object" icon="gtk-go-forward" attrs="{'invisible':['|',('state1','!=','submitted'),('is_person', '!=', True)]}"/>
-                		<button name="action_approve1" string="Approve" type="object" icon="gtk-go-forward" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'verified')]}"/>
-                		<button name="action_sanction" string="Sanction" type="object" icon="gtk-go-forward" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'approved')]}"/>
-                		<button name="action_reject1"  string="Reject" type="object" icon="gtk-goto-last" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'verified'),('state1', '!=', 'approved')]}"/>  
+                    	<button name="action_submit" string="Submit" type="object" groups="wakf_registration.group_sws_submit" icon="gtk-go-forward" attrs="{'invisible':['|',('state1','in',('submitted','verified','approved','sanctioned','rejected','re_payment','paid')),('is_person', '!=', True)]}"/>
+                    	<button name="action_verify1" string="Verify" type="object" groups="wakf_registration.group_sws_submit" icon="gtk-go-forward" attrs="{'invisible':['|',('state1','!=','submitted'),('is_person', '!=', True)]}"/>
+                		<button name="action_approve1" string="Approve" type="object" groups="wakf_registration.group_sws_submit" icon="gtk-go-forward" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'verified')]}"/>
+                		<button name="action_sanction" string="Sanction" type="object" groups="wakf_registration.group_sws_sanction" icon="gtk-go-forward" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'approved')]}"/>
+                		<button name="action_reject1"  string="Reject" type="object"  groups="wakf_registration.group_cancel_application" icon="gtk-goto-last" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'verified'),('state1', '!=', 'approved')]}"/>  
                 		<field name="state1" widget="statusbar" statusbar_visible="submitted,verified,approved,sanctioned,revolving,finished,rejected,re_payment,paid" attrs="{'invisible':['|',('is_person', '!=', True),('is_wakf', '=', True)]}"/>
                     </header>
                 </xpath>
@@ -108,7 +108,7 @@
 			                        <field name="taluk_id" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
 			                        <field name="district_sws_id" attrs="{'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
 			                        <field name="reg_no" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}" on_change="on_change_wakf_regno_to_name(reg_no)"/>
-			                        <field name="wakf_id" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
+			                        <field name="wakf_id" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['submitted','verified','approved','sanctioned','rejected'])]}" on_change="on_change_wakf_name1_to_regno(wakf_id)"/>
 			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected'])]}" name="meeting_place"/>
 			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned']),('categ_name','=','Education Loan')],'invisible':['|',('state1','not in',['verified','approved','sanctioned']),('categ_name','!=','Education Loan')],'readonly':[('state1','in',['approved','sanctioned','rejected'])]}" name="course_end"/>
 			                        
@@ -116,7 +116,13 @@
                        			<group  attrs="{'invisible':['|',('is_person', '!=', True),('state1', 'not in',['approved','sanctioned','re_payment','paid','revolving','finished'])]}" string="Sanction Details">
                        				<field attrs="{'required':[('state1','in',['approved','sanctioned'])],'readonly':[('state1','in',['paid','finished','revolving'])]}" name="amount_sanction"/>
                        				<field name="sanction_details" attrs="{'readonly':[('state1','in',['sanctioned','rejected','re_payment','paid','finished','revolving'])]}"/>
-                       				<field name="date_sanction" attrs="{'readonly':[('state1','in',['sanctioned','rejected','re_payment','paid','finished','revolving'])]}"/>
+                       				<field name="date_sanction" attrs="{'required':[('state1','in',['approved','sanctioned'])],'readonly':[('state1','in',['sanctioned','rejected','re_payment','paid','finished','revolving'])]}"/>
+                       			</group>
+                       			<group  attrs="{'invisible':['|','|',('categ_name','!=','Pension'),('is_person', '!=', True),('state1', 'not in',['sanctioned','re_payment','paid','revolving','finished'])]}" string="Finish Cycle">
+                       				<field attrs="{'readonly':[('state1','in',['paid','finished'])]}" name="finish_pension"/>
+                       				<field name="reason" attrs="{'readonly':[('state1','in',['rejected','re_payment','paid','finished'])]}"/>
+                       				<field name="date_death" attrs="{'readonly':[('state1','in',['rejected','re_payment','paid','finished'])]}"/>
+                       				<button name="action_stop_pension" string="Stop Pension" type="object" icon="gtk-goto-last"/>
                        			</group>
                        			<!--  
                        			<group  attrs="{'invisible':['|',('is_person', '!=', True),('state1', 'not in',['re_payment','paid','revolving','finished'])]}" string="Return Details">
@@ -126,7 +132,7 @@
                        			-->
                  </xpath>
                         
-                  <xpath expr="//page[@string='Sales &amp; Purchases']" position="attributes" >
+                  <xpath expr="//page[@string='Sales &amp; Purchases']" position="attributes">
     					<attribute name="invisible">1</attribute>
 				 </xpath>
 				 
@@ -199,8 +205,8 @@
 				                        	<page string="Experience Lines">
 				                        		<field name="exp_line_id" nolabel="1" widget="one2many_list">
 											 	 	<tree string="Experience Lines" editable="bottom">
-											 	 		<field name="partner_id"/>
 											 	 		<field name="reg_no" on_change="on_change_wakf_regno_to_name(reg_no)"/>
+											 	 		<field name="partner_id" on_change="on_change_wakf_name_to_regno(partner_id)"/>
 											 	 		<field name="experience_from"/>
 											 	 		<field name="experience_to" on_change="on_change_Work_Exp_from(experience_from,experience_to)"/>
 														<field name="total_year"/>
@@ -504,8 +510,9 @@
                         		<field name="history_transaction" nolabel="1" edit="False" delete="False">
                         			<tree string="Transactions">	    
 					                        <field name="year"/>
+					                        <field name="date_sanction"/>
 					                        <field name="for_month"/>
-					                        <field name="amount"/>
+					                        <field name="amount" sum="Total Amount"/>
 					                        <field name="dd_no"/>
 					                        <field name="transaction_no"/>
 					                        <field name="status"/>
@@ -530,8 +537,21 @@
   			<field name="inherit_id" ref="base.view_partner_tree" />
   			<field name="arch" type="xml">
   		  	<xpath expr="//tree[@string='Contacts']/field[@name='name']" position="before">
+  				<!--  ================== FOR WAKF ============= -->
   				<field name="wakf_reg_no"/>
+  				<field name="type_id"/>
+  				<field name="wakf_registration_date"/>
+  				<field name="classification"/>
+  				<field name="taluk_id"/>
+  				<field name="village_id"/>
+  				<!-- ==================  FOR SWS =============== -->
   				<field name="appli_no"/>
+  				<field name="appli_date"/>
+  				<field name="head"/>
+  				<field name="category"/>
+  				<field name="amount_sanction" sum="Total Amount"/>
+  				<field name="state1"/>
+  				
   			</xpath>
   			<xpath expr="//tree[@string='Contacts']/field[@name='name']" position="after">
   				<field name="district_id"/>
@@ -547,7 +567,9 @@
   			<field name="arch" type="xml">	
   				<xpath expr="//search[@string='Search Partner']/field[@name='name']" position="replace">
   					<field name="wakf_reg_no" filter_domain="['|','|',('wakf_reg_no','=',self),('parent_id','ilike',self),('ref','=',self)]"/>
-  					<field name="appli_no" string="Application Number" filter_domain="[(('appli_no','=',self))]"/>
+  					<field name="name" string="Wakf Name" filter_domain="[(('name','ilike',self))]"/>
+  					<field name="appli_no" string="Application Number" filter_domain="['|','|',('appli_no','=',self),('parent_id','ilike',self),('ref','=',self)]"/>
+  					<field name="name" string="Applicant Name" filter_domain="[(('name','ilike',self))]"/>
   					
   				</xpath>
   				<!-- ############################# UPDATES ############################### -->
@@ -569,16 +591,15 @@
   			 		<filter string="Kazargode District" name="open"  domain="[('district_id.name','=','Kazargode')]" help="District of Wakf"/>
   			 		</group>
   			 		<group expand="0" string="SWS - Filter By...">
-  					<filter string="Submitted" name="open"  domain="[('state1','!=','submitted')]" help="Submitted Applications"/>
-	                <filter string="Verified" name="open" domain="[('state1','!=','verified')]" help="Verified Applications"/>
-	                <filter string="Approved" name="open" domain="[('state1','!=','approved')]" help="Approved Applications"/>
-	                <filter string="Sactioned" name="open" domain="[('state1','!=','sanctioned')]" help="Sanctioned Applications"/>
-	                <filter string="Revolving" name="open" domain="[('state1','!=','revolving')]" help="Revolving Applications"/>
-	                <filter string="Finished" name="open" domain="[('state1','!=','finished')]" help="Finished Application"/>
-	                <filter string="Rejected" name="open" domain="[('state1','!=','rejected')]" help="Rejected Applications"/>
-	                <filter string="Ready for Refund" name="open" domain="[('state1','!=','re_payment')]" help="Open Education Loans"/>
-	                <filter string="Refund Completed" name="open" domain="[('state1','!=','paid')]" help="Education Loan Closed"/>
-  				    <filter string="Application No" name="open" domain="[('appli_no','=',self)]" help="Education Loan Closed"/>
+  					<filter string="Submitted" name="open"  domain="[('state1','=','submitted')]" help="Submitted Applications"/>
+	                <filter string="Verified" name="open" domain="[('state1','=','verified')]" help="Verified Applications"/>
+	                <filter string="Approved" name="open" domain="[('state1','=','approved')]" help="Approved Applications"/>
+	                <filter string="Sactioned" name="open" domain="[('state1','=','sanctioned')]" help="Sanctioned Applications"/>
+	                <filter string="Revolving" name="open" domain="[('state1','=','revolving')]" help="Revolving Applications"/>
+	                <filter string="Finished" name="open" domain="[('state1','=','finished')]" help="Finished Application"/>
+	                <filter string="Rejected" name="open" domain="[('state1','=','rejected')]" help="Rejected Applications"/>
+	                <filter string="Ready for Refund" name="open" domain="[('state1','=','re_payment')]" help="Open Education Loans"/>
+	                <filter string="Refund Completed" name="open" domain="[('state1','=','paid')]" help="Education Loan Closed"/>
   					
   					</group>
   					<group expand="0" string="SWS - Group By...">

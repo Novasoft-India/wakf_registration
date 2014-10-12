@@ -8,6 +8,7 @@ class wakf_movableproperty(osv.osv):
     """
     _name = 'wakf.movableproperty'
     _description = 'wakf.movableproperty'
+    _order = "id desc"
  
     _columns = {
             'wakf_id':fields.many2one('res.partner','Wakf Name',ondelete='set null'),                      

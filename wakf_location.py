@@ -9,6 +9,7 @@ class wakf_district(osv.osv):
     """
     _name = 'wakf.district'
     _description = 'wakf.district'
+    _order = "id desc"
  
     _columns = {
             'name':fields.char('Name', size=64, required=True),

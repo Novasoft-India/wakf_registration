@@ -6,6 +6,7 @@ class sws_scholar_criteria(osv.osv):
  
     _name = 'sws.scholar.criteria'
     _description = 'sws.scholar.criteria'
+    _order = "id desc"
  
     _columns = {
             'name':fields.char('Criteria Name:', required=False),

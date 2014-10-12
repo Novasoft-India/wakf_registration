@@ -7,14 +7,115 @@ from datetime import datetime
 from datetime import date,timedelta
 from dateutil.relativedelta import relativedelta
 from tools.translate import _
+from lxml import etree
+from openerp.osv.orm import setup_modifiers
 
 class wakf_registration(osv.osv):
  
  
     #_name = 'customer.inherit.'
     _inherit = 'res.partner'
+    _order = "id desc"
+    #_table = 'res_partner'
     
-  
+    #def fields_view_get(self, cr, user, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
+    #    if context is None:
+    #        context = {}
+    #    #if (not view_id) and (view_type=='form') and context and context.get('force_email', False):
+    #    #    view_id = self.pool.get('ir.model.data').get_object_reference(cr, user, 'base', 'view_partner_simple_form')[1]
+    #    res = super(wakf_registration,self).fields_view_get(cr, user, view_id, view_type, context, toolbar=toolbar, submenu=submenu)
+    #    if view_type == 'form':
+    #        res['arch'] = self.fields_view_get_address(cr, user, res['arch'], context=context)
+    #    
+    #    
+    #    doc = etree.XML(res['arch'])
+    #    
+    #    if view_type == 'search':
+    #        if not context.get('default_supplier'):   ## Customer
+    #            for node in doc.xpath("//group[@name='extended filter']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@string='Application Number']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@string='Applicant Name']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//group[@string='SWS - Filter By...']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//group[@string='SWS - Group By...']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//filter[@string='Companies']"):
+    #                node.set('string', 'Wakf Office')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//filter[@string='Suppliers']"):
+    #                doc.remove(node)
+    #        if context.get('default_supplier'):       ## Supplier
+    #            for node in doc.xpath("//field[@name='wakf_reg_no']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@string='Wakf Name']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//group[@string='Location-Filter By...']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//filter[@string='Customers']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//filter[@string='Suppliers']"):
+    #                node.set('string', 'Applicants')
+    #            for node in doc.xpath("//filter[@string='Companies']"):
+    #                doc.remove(node)
+    #            
+    #        res['arch'] = etree.tostring(doc)
+    #    
+    #    if view_type == 'tree':
+    #        if not context.get('default_supplier'):
+    #            for node in doc.xpath("//field[@name='appli_no']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='district_sws_id']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='email']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='appli_date']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='head']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='category']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='state1']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='amount_sanction']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #        if context.get('default_supplier'):
+    #            for node in doc.xpath("//field[@name='wakf_reg_no']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='district_id']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='email']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='type_id']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='wakf_registration_date']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='classification']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='taluk_id']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='village_id']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #        res['arch'] = etree.tostring(doc)
+    #    return res
     
     def on_change_wakf_village_to_taluk(self, cr, uid, ids, village_id, context=None):
         values = {}
@@ -93,11 +194,33 @@ class wakf_registration(osv.osv):
             search_ids = id_res_partner.search(cr, uid, search_condition, context=context)
             if search_ids:
                 similar_objs = id_res_partner.browse(cr, uid, search_ids, context=context)[0]
-                if similar_objs:
-                    values={'wakf_id':similar_objs.id,
+                values={'wakf_id':similar_objs.id,
+                        'district_sws_id':similar_objs.district_id.id,
+                        }
+                return {'value' :values}
+            else:
+                values={'wakf_id':False,
+                        'district_sws_id':False}
+                return {'value' :False}
+        return {'value' :False}
+    
+    def on_change_wakf_name1_to_regno(self, cr, uid, ids, wakf_id, context=None):
+        values = {}
+        id_res_partner=self.pool.get('res.partner')
+        if wakf_id:
+            similar_objs = id_res_partner.browse(cr, uid, wakf_id, context=context)
+            if similar_objs:
+                values={'reg_no':similar_objs.wakf_reg_no,
+                        'district_sws_id':similar_objs.district_id.id,
+                            }
+                return {'value' :values}
+            else:
+                values={'reg_no':False,
+                        'district_sws_id':False
                             }
                 return {'value' :values}
         return False
+    
     def action_reject1(self, cr, uid, ids, context=None):
         cancel_list =[]
         cancel_dict = {
@@ -448,6 +571,14 @@ class wakf_registration(osv.osv):
             self.write(cr, uid, ids, {'state1':'approved','date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),'approved_by':uid})
         return True
     
+    def action_stop_pension(self, cr, uid, ids, context=None):
+        invoice_ids = []
+        for rec in self.browse(cr, uid, ids, context=context):
+            finish_pension = rec.finish_pension
+            if finish_pension:
+                self.write(cr, uid, ids, {'state1':'finished','date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),'approved_by':uid})
+        return True
+    
     def action_sanction(self, cr, uid, ids, context=None):
         invoice_ids = []
         transaction_list = []
@@ -463,6 +594,7 @@ class wakf_registration(osv.osv):
             price_unit = rec.amount_sanction
             new_amount = rec.amount_sanction
             appli_no = rec.appli_no
+            date_sanction = rec.date_sanction
             ############################
             date_today = date.today()
             month = date_today.month
@@ -505,7 +637,9 @@ class wakf_registration(osv.osv):
                 raise osv.except_osv(_('Warning!'), _('Please create "Assessment Journal" First'))
             journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
             ###############################################################################################
-            self.pool.get('account.invoice').create(cr,uid,{'head':head,'journal_type':'sale','type':'out_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})
+            date_today = date_today.strftime("%Y-%m-%d")
+            if date_sanction >= date_today:
+                self.pool.get('account.invoice').create(cr,uid,{'date_sanction':date_sanction,'head':head,'journal_type':'sale','type':'out_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})
             self.write(cr,uid,ids,{'state1':'sanctioned'})
         if rec.head.name == "Pension":
             ###########################################################################
@@ -519,9 +653,12 @@ class wakf_registration(osv.osv):
                 raise osv.except_osv(_('Warning!'), _('Please create "SWS Journal" First'))
             journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
             ##############################################################################
-            self.pool.get('account.invoice').create(cr,uid,{'key':"pension",'head':head,'for_month':month,'year':year,'amount':price_unit,'journal_type':'purchase','type':'in_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})   
-            transaction_list.append((0,0,{'for_month':month,'year':year,'amount':price_unit,'status':'pending'}))
-            self.write(cr,uid,ids,{'state1':'sanctioned','history_transaction':transaction_list})
+            date_today = date_today.strftime("%Y-%m-%d")
+            if date_sanction >= date_today:
+                self.pool.get('account.invoice').create(cr,uid,{'date_sanction':date_sanction,'key':"pension",'head':head,'for_month':month,'year':year,'amount':price_unit,'journal_type':'purchase','type':'in_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})   
+            transaction_list.append((0,0,{'date_sanction':date_sanction,'for_month':month,'year':year,'amount':price_unit,'status':'pending'}))
+            #self.write(cr,uid,ids,{'state1':'sanctioned','history_transaction':transaction_list})
+            self.write(cr,uid,ids,{'state1':'sanctioned'})
         else:
             ###########################################################################
             search_ids = self.pool.get('account.account').search(cr,uid,[('name','=',"Accounts Payable")])
@@ -534,30 +671,12 @@ class wakf_registration(osv.osv):
                 raise osv.except_osv(_('Warning!'), _('Please create "Purchase Journal" First'))
             journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
             ##############################################################################
-            self.pool.get('account.invoice').create(cr,uid,{'head':head,'for_month':month,'year':year,'amount':price_unit,'journal_type':'purchase','type':'in_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})   
-            transaction_list.append((0,0,{'for_month':month,'year':year,'amount':price_unit,'status':'pending'}))
+            date_today = date_today.strftime("%Y-%m-%d")
+            if date_sanction >= date_today:
+                self.pool.get('account.invoice').create(cr,uid,{'date_sanction':date_sanction,'head':head,'for_month':month,'year':year,'amount':price_unit,'journal_type':'purchase','type':'in_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})   
+            transaction_list.append((0,0,{'date_sanction':date_sanction,'for_month':month,'year':year,'amount':price_unit,'status':'pending'}))
             self.write(cr,uid,ids,{'state1':'sanctioned','history_transaction':transaction_list})
         return True
-           
-    
-    def method_name(self, cr, uid, ids, context=None):
-        """Method is used to show form view in new windows"""
-        this = self.browse(cr, uid, ids, context=context)[0]  
-        mod_obj = self.pool.get('ir.model.data')  
-        res = mod_obj.get_object_reference(cr, uid, 'sale_inherit', 'pop_up_cancel_tree_view')
-        return {
-           'type': 'ir.actions.act_window',
-           'name': 'POPUP',
-           'view_mode': 'form',
-           'view_type': 'tree,form',
-           'view_id': False,
-           'res_model': 'pop.up.cancel',
-           'nodestroy': True,
-           'res_id': this.popup_id.id, # assuming the many2one
-           'target':'new',
-           'context': context,
-           'flags': {'form': {'action_buttons': True}}
-           }
   
  
     _columns = {
@@ -582,13 +701,13 @@ class wakf_registration(osv.osv):
             'waquif_father_uid':fields.char("Father/Husband's UID",size=32,required=False,help='Unique Identification to be assigned from the Aadhar Project'),
             'waquif_address':fields.text('Waquif Address',required=False),
             'type_id':fields.many2one('wakf.type','Wakf Type',ondelete='set null',required=False),
-            'district_id':fields.many2one('wakf.district','District',ondelete='set null'),
+            'district_id':fields.many2one('wakf.district','Wakf District',ondelete='set null'),
             'taluk_id':fields.many2one('wakf.taluk','Taluk',ondelete='set null'),
             'village_id':fields.many2one('wakf.village','Village',ondelete='set null'), 
             'wakf_immovable_property_id':fields.one2many('wakf.immovableproperty','wakf_id','Immovable Properties'),
             'wakf_movable_property_id':fields.one2many('wakf.movableproperty','wakf_id','Movable Properties'),
             'wakf_management_id':fields.one2many('wakf.management','wakf_id','Management Details'),
-            'company_id': fields.many2one('res.company', 'Company', required=False),
+            #'company_id': fields.many2one('res.company', 'Company', required=False),
             'is_wakf':fields.boolean('Is a wakf ?'),
             'is_person':fields.boolean('Is a person ?'),
             'reg_type':fields.selection([('wakf','Wakf'),('person','Person')],'Registration type'),
@@ -620,7 +739,7 @@ class wakf_registration(osv.osv):
             'district_sws_id':fields.many2one('wakf.district','District',ondelete='set null'),
             'reg_no':fields.integer('Wakf Reg No', size=8),
             'wakf_id':fields.many2one('res.partner','Wakf Name',ondelete='set null'),
-            'sws_pension_id':fields.one2many('sws.category.pension','sws_id1','Pension Details'),
+            'sws_pension_id':fields.one2many('sws.category.pension','sws_id1','Pension Details',limit=1),
             'sws_education_id':fields.one2many('sws.category.education','sws_id1','Education Details'),
             'sws_orphans_id':fields.one2many('sws.category.orphans','sws_id1','Orphans Details'),
             'sws_firms_id':fields.one2many('sws.category.firms','sws_id1','Firms Details'),
@@ -661,8 +780,13 @@ class wakf_registration(osv.osv):
             'sanction_details':fields.char('Sanction Details',size=256),
             'date_sanction':fields.date('Starting Date'),
             'meeting_place':fields.char('Meeting Place'),
+            'finish_pension':fields.boolean('Stop Pension Cycle'),
+            'reason': fields.selection([
+                ('death', 'Death'),
+                ('disqualify', 'Disqualified'),
+                ],'Reason', readonly=False),
+            'date_death':fields.date('Date of Death'),
             'course_end':fields.date('Course Ending Date'),
-            
             'amount_balance':fields.float('Balance Amount'),
             'amount_received':fields.char('Amount Received'),
             
@@ -673,7 +797,8 @@ class wakf_registration(osv.osv):
         }
     _defaults = {
                  'is_wakf':True,
-                 'company_id': lambda self,cr,uid,ctx: self.pool['res.company']._company_default_get(cr,uid,object='res.partner',context=ctx) 
+                 #'company_id': lambda self,cr,uid,ctx: self.pool['res.company']._company_default_get(cr,uid,object='res.partner',context=ctx) 
+                 #'company_id': lambda self, cr, uid, ctx: self.pool.get('res.company')._company_default_get(cr, uid, 'res.partner', context=ctx),
                 #'state1':lambda *a:'submitted',
                 #'submitted_by': lambda obj, cr, uid, context: uid,
                 #'date_submitted':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
@@ -706,12 +831,14 @@ class pension_disease_history(osv.osv):
                 ('NOV', 'November'),
                 ('DEC', 'December'),
                 ],'For Month of', readonly=True),
+            'date_sanction':fields.date('Date of Sanction'),
             'amount':fields.float('Amount'),
             'dd_no':fields.char('Cheque/DD No'),
             'transaction_no':fields.char('Transaction No'),
             'status': fields.selection([
                 ('paid', 'Paid'),
                 ('pending', 'Pending'),
+                ('invoiced', 'Invoiced'),
                 ('returned', 'Returned'),
                 ('closed', 'Closed'),
                 ],'Status', readonly=True),
