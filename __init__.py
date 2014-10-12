@@ -1,3 +1,4 @@
+import calender
 import wakf_registration
 import wakf_immovable_property
 import wakf_movable_property

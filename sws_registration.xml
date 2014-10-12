@@ -20,8 +20,7 @@
                 <field name="model">pop.up.cancel</field>
                 <field name="type">form</field>
                 <field name="arch" type="xml">
-                    <form string="POPUP" version="7.0">
-                        
+                    <form string="POPUP" version="7.0">      
                         <field name="over_income"/>
                         <field name="grant_sanctioned"/>
                         <field name="after_marriage"/>
@@ -118,7 +117,7 @@
                 <field name="view_id" ref="pensioncycle_form_view"/>
             </record>
 
-			<menuitem id="pensioncycle_menu" name="Pension Cycle" parent="sws_sub_head" action="action_pensioncycle_tree_view"/>
+			
          
             
          <!-- ====================================== SUPPLIER VIEW INHERIT FOR SWS ========================= -->
@@ -127,6 +126,7 @@
 			<field name="name">Applicants</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">res.partner</field>
+			<field name="priority" eval="16"/>
 			<field name="view_type">form</field>
 			<field name="domain">[]</field>
 			<field name="auto_refresh">10</field>
@@ -142,19 +142,19 @@
 			</field>
 		</record>
 		<!-- ====================================== SWS Action Menus ======================================= -->		
-		<menuitem id="sws_main_menu" name="SWS" parent="" groups="wakf_registration.group_sws_submit"/>	
+			<menuitem id="sws_main_menu" name="SWS" parent=""/>	
 		
 	
 		<!-- ======================================  Sub Menus ======================================= -->		
-			<menuitem id="sws_sub_head" name="SWS Registration" parent="sws_main_menu" groups="wakf_registration.group_sws_submit"/>
+			<menuitem id="sws_sub_head" name="SWS Registration" parent="sws_main_menu"/>
 			
 		
-	   
 	   <!-- ====================================== SWS Action Menus ======================================= -->		
 			<menuitem id="sws_registration" name="Registration" parent="sws_sub_head" sequence="1" action="action_partner_supplier_form_demo"/>
 			<menuitem id="sws_criteria_menu" name="SWS Criteria" parent="sws_sub_head" sequence="2" action="action_sws_criteria_tree_view"/> 
 			<menuitem id="sws_scholar_criteria_menu" name="SWS Scholarship Criteria" parent="sws_sub_head" sequence="3" action="action_sws_scholar_criteria_tree_view"/>
-    		
+			<menuitem id="sws_scholar_sanction_criteria_menu" name="Scholarship Sanction Criteria" parent="sws_sub_head" sequence="4" action="action_sws_scholar_sanction_criteria_tree_view"/>
+    		<menuitem id="pensioncycle_menu" name="Pension Cycle" parent="sws_sub_head" sequence="5" action="action_pensioncycle_tree_view"/>
     	<!-- =======================================  Scheduler ================================================== -->	
     		
     		  <!--  

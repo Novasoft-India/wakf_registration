@@ -7,14 +7,115 @@ from datetime import datetime
 from datetime import date,timedelta
 from dateutil.relativedelta import relativedelta
 from tools.translate import _
+from lxml import etree
+from openerp.osv.orm import setup_modifiers
 
 class wakf_registration(osv.osv):
  
  
     #_name = 'customer.inherit.'
     _inherit = 'res.partner'
+    _order = "id desc"
+    #_table = 'res_partner'
     
-  
+    #def fields_view_get(self, cr, user, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
+    #    if context is None:
+    #        context = {}
+    #    #if (not view_id) and (view_type=='form') and context and context.get('force_email', False):
+    #    #    view_id = self.pool.get('ir.model.data').get_object_reference(cr, user, 'base', 'view_partner_simple_form')[1]
+    #    res = super(wakf_registration,self).fields_view_get(cr, user, view_id, view_type, context, toolbar=toolbar, submenu=submenu)
+    #    if view_type == 'form':
+    #        res['arch'] = self.fields_view_get_address(cr, user, res['arch'], context=context)
+    #    
+    #    
+    #    doc = etree.XML(res['arch'])
+    #    
+    #    if view_type == 'search':
+    #        if not context.get('default_supplier'):   ## Customer
+    #            for node in doc.xpath("//group[@name='extended filter']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@string='Application Number']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@string='Applicant Name']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//group[@string='SWS - Filter By...']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//group[@string='SWS - Group By...']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//filter[@string='Companies']"):
+    #                node.set('string', 'Wakf Office')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//filter[@string='Suppliers']"):
+    #                doc.remove(node)
+    #        if context.get('default_supplier'):       ## Supplier
+    #            for node in doc.xpath("//field[@name='wakf_reg_no']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@string='Wakf Name']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//group[@string='Location-Filter By...']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//filter[@string='Customers']"):
+    #                doc.remove(node)
+    #            for node in doc.xpath("//filter[@string='Suppliers']"):
+    #                node.set('string', 'Applicants')
+    #            for node in doc.xpath("//filter[@string='Companies']"):
+    #                doc.remove(node)
+    #            
+    #        res['arch'] = etree.tostring(doc)
+    #    
+    #    if view_type == 'tree':
+    #        if not context.get('default_supplier'):
+    #            for node in doc.xpath("//field[@name='appli_no']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='district_sws_id']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='email']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='appli_date']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='head']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='category']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='state1']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='amount_sanction']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #        if context.get('default_supplier'):
+    #            for node in doc.xpath("//field[@name='wakf_reg_no']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='district_id']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='email']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='type_id']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='wakf_registration_date']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='classification']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='taluk_id']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #            for node in doc.xpath("//field[@name='village_id']"):
+    #                node.set('invisible', 'True')
+    #                doc.remove(node)
+    #        res['arch'] = etree.tostring(doc)
+    #    return res
     
     def on_change_wakf_village_to_taluk(self, cr, uid, ids, village_id, context=None):
         values = {}
@@ -600,13 +701,13 @@ class wakf_registration(osv.osv):
             'waquif_father_uid':fields.char("Father/Husband's UID",size=32,required=False,help='Unique Identification to be assigned from the Aadhar Project'),
             'waquif_address':fields.text('Waquif Address',required=False),
             'type_id':fields.many2one('wakf.type','Wakf Type',ondelete='set null',required=False),
-            'district_id':fields.many2one('wakf.district','District',ondelete='set null'),
+            'district_id':fields.many2one('wakf.district','Wakf District',ondelete='set null'),
             'taluk_id':fields.many2one('wakf.taluk','Taluk',ondelete='set null'),
             'village_id':fields.many2one('wakf.village','Village',ondelete='set null'), 
             'wakf_immovable_property_id':fields.one2many('wakf.immovableproperty','wakf_id','Immovable Properties'),
             'wakf_movable_property_id':fields.one2many('wakf.movableproperty','wakf_id','Movable Properties'),
             'wakf_management_id':fields.one2many('wakf.management','wakf_id','Management Details'),
-            'company_id': fields.many2one('res.company', 'Company', required=False),
+            #'company_id': fields.many2one('res.company', 'Company', required=False),
             'is_wakf':fields.boolean('Is a wakf ?'),
             'is_person':fields.boolean('Is a person ?'),
             'reg_type':fields.selection([('wakf','Wakf'),('person','Person')],'Registration type'),
@@ -686,7 +787,6 @@ class wakf_registration(osv.osv):
                 ],'Reason', readonly=False),
             'date_death':fields.date('Date of Death'),
             'course_end':fields.date('Course Ending Date'),
-            
             'amount_balance':fields.float('Balance Amount'),
             'amount_received':fields.char('Amount Received'),
             
@@ -697,7 +797,8 @@ class wakf_registration(osv.osv):
         }
     _defaults = {
                  'is_wakf':True,
-                 'company_id': lambda self,cr,uid,ctx: self.pool['res.company']._company_default_get(cr,uid,object='res.partner',context=ctx) 
+                 #'company_id': lambda self,cr,uid,ctx: self.pool['res.company']._company_default_get(cr,uid,object='res.partner',context=ctx) 
+                 #'company_id': lambda self, cr, uid, ctx: self.pool.get('res.company')._company_default_get(cr, uid, 'res.partner', context=ctx),
                 #'state1':lambda *a:'submitted',
                 #'submitted_by': lambda obj, cr, uid, context: uid,
                 #'date_submitted':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),

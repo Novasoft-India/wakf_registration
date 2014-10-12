@@ -18,7 +18,7 @@
 <record id="group_sws_submit" model="res.groups">
  <field name="name">Can Submit Application</field> 
  <field name="category_id" ref="module_category_wakf_sws_management"/> 
- <field name="implied_ids" eval="[(4, ref('base.group_sale_manager'))]"/>
+ <field name="implied_ids" eval="[(4, ref('base.group_partner_manager'))]"/>
  <field name="users" eval="[(4, ref('base.user_root'))]"/>
  <field name="comment">The user will be able to submit Application.</field>
   </record> 
@@ -43,6 +43,7 @@
 	 <field name="name">Can Register a wakf</field> 
 	 <field name="category_id" ref="module_category_wakf_registration_management"/>
 	  <field name="implied_ids" eval="[(4, ref('base.group_sale_manager'))]"/>
+	  <field name="implied_ids" eval="[(4, ref('wakf_registration.group_sws_submit'))]"/>
      <field name="users" eval="[(4, ref('base.user_root'))]"/>
 	 <field name="comment">The user will be able to register a wakf</field>
    </record> 

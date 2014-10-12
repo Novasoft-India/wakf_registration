@@ -9,6 +9,7 @@ class wakf_management(osv.osv):
     """
     _name = 'wakf.management'
     _description = 'wakf.management'
+    _order = "id desc"
     
     def on_change_wakf(self, cr, uid, ids, wakf_reg_no, context=None):
         values = {}
