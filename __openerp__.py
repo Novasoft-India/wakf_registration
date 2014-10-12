@@ -19,7 +19,7 @@
              'wakf_type_view.xml',
              'sws_criteria.xml',
              'scholar_sanction_criteria_view.xml',
-             'calender.xml',
+             'correction_view.xml',
              'sws_registration.xml',
              ],
     'demo': [],

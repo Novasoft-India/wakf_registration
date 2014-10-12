@@ -18,104 +18,104 @@ class wakf_registration(osv.osv):
     _order = "id desc"
     #_table = 'res_partner'
     
-    #def fields_view_get(self, cr, user, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
-    #    if context is None:
-    #        context = {}
-    #    #if (not view_id) and (view_type=='form') and context and context.get('force_email', False):
-    #    #    view_id = self.pool.get('ir.model.data').get_object_reference(cr, user, 'base', 'view_partner_simple_form')[1]
-    #    res = super(wakf_registration,self).fields_view_get(cr, user, view_id, view_type, context, toolbar=toolbar, submenu=submenu)
-    #    if view_type == 'form':
-    #        res['arch'] = self.fields_view_get_address(cr, user, res['arch'], context=context)
-    #    
-    #    
-    #    doc = etree.XML(res['arch'])
-    #    
-    #    if view_type == 'search':
-    #        if not context.get('default_supplier'):   ## Customer
-    #            for node in doc.xpath("//group[@name='extended filter']"):
+    def fields_view_get(self, cr, user, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
+        if context is None:
+            context = {}
+        #if (not view_id) and (view_type=='form') and context and context.get('force_email', False):
+        #    view_id = self.pool.get('ir.model.data').get_object_reference(cr, user, 'base', 'view_partner_simple_form')[1]
+        res = super(wakf_registration,self).fields_view_get(cr, user, view_id, view_type, context, toolbar=toolbar, submenu=submenu)
+        if view_type == 'form':
+            res['arch'] = self.fields_view_get_address(cr, user, res['arch'], context=context)
+        
+        
+        doc = etree.XML(res['arch'])
+        
+        if view_type == 'search':
+            if not context.get('default_supplier'):   ## Customer
+                for node in doc.xpath("//group[@name='extended filter']"):
+                    doc.remove(node)
+                for node in doc.xpath("//field[@string='Application Number']"):
+                    doc.remove(node)
+                for node in doc.xpath("//field[@string='Applicant Name']"):
+                    doc.remove(node)
+                for node in doc.xpath("//group[@string='SWS - Filter By...']"):
+                    doc.remove(node)
+                for node in doc.xpath("//group[@string='SWS - Group By...']"):
+                   doc.remove(node)
+                for node in doc.xpath("//filter[@string='Companies']"):
+                    node.set('string', 'Wakf Office')
+                    doc.remove(node)
+                for node in doc.xpath("//filter[@string='Suppliers']"):
+                    doc.remove(node)
+            if context.get('default_supplier'):       ## Supplier
+                for node in doc.xpath("//field[@name='wakf_reg_no']"):
+                    doc.remove(node)
+                for node in doc.xpath("//field[@string='Wakf Name']"):
+                    doc.remove(node)
+                for node in doc.xpath("//group[@string='Location-Filter By...']"):
+                    doc.remove(node)
+                for node in doc.xpath("//filter[@string='Customers']"):
+                    doc.remove(node)
+                for node in doc.xpath("//filter[@string='Suppliers']"):
+                    node.set('string', 'Applicants')
+                for node in doc.xpath("//filter[@string='Companies']"):
+                    doc.remove(node)
+                
+            res['arch'] = etree.tostring(doc)
+        
+        if view_type == 'tree':
+            if not context.get('default_supplier'):
+                for node in doc.xpath("//field[@name='appli_no']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='district_sws_id']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='email']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='appli_date']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='head']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='category']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='state1']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='amount_sanction']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+            if context.get('default_supplier'):
+                for node in doc.xpath("//field[@name='wakf_reg_no']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='district_id']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='email']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='type_id']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='wakf_registration_date']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='classification']"):
+                    node.set('invisible', 'True')
     #                doc.remove(node)
-    #            for node in doc.xpath("//field[@string='Application Number']"):
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@string='Applicant Name']"):
-    #                doc.remove(node)
-    #            for node in doc.xpath("//group[@string='SWS - Filter By...']"):
-    #                doc.remove(node)
-    #            for node in doc.xpath("//group[@string='SWS - Group By...']"):
-    #                doc.remove(node)
-    #            for node in doc.xpath("//filter[@string='Companies']"):
-    #                node.set('string', 'Wakf Office')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//filter[@string='Suppliers']"):
-    #                doc.remove(node)
-    #        if context.get('default_supplier'):       ## Supplier
-    #            for node in doc.xpath("//field[@name='wakf_reg_no']"):
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@string='Wakf Name']"):
-    #                doc.remove(node)
-    #            for node in doc.xpath("//group[@string='Location-Filter By...']"):
-    #                doc.remove(node)
-    #            for node in doc.xpath("//filter[@string='Customers']"):
-    #                doc.remove(node)
-    #            for node in doc.xpath("//filter[@string='Suppliers']"):
-    #                node.set('string', 'Applicants')
-    #            for node in doc.xpath("//filter[@string='Companies']"):
-    #                doc.remove(node)
-    #            
-    #        res['arch'] = etree.tostring(doc)
-    #    
-    #    if view_type == 'tree':
-    #        if not context.get('default_supplier'):
-    #            for node in doc.xpath("//field[@name='appli_no']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='district_sws_id']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='email']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='appli_date']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='head']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='category']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='state1']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='amount_sanction']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #        if context.get('default_supplier'):
-    #            for node in doc.xpath("//field[@name='wakf_reg_no']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='district_id']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='email']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='type_id']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='wakf_registration_date']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='classification']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='taluk_id']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #            for node in doc.xpath("//field[@name='village_id']"):
-    #                node.set('invisible', 'True')
-    #                doc.remove(node)
-    #        res['arch'] = etree.tostring(doc)
-    #    return res
+                for node in doc.xpath("//field[@name='taluk_id']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='village_id']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+            res['arch'] = etree.tostring(doc)
+        return res
     
     def on_change_wakf_village_to_taluk(self, cr, uid, ids, village_id, context=None):
         values = {}
@@ -579,6 +579,41 @@ class wakf_registration(osv.osv):
                 self.write(cr, uid, ids, {'state1':'finished','date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),'approved_by':uid})
         return True
     
+    def action_stop_education(self, cr, uid, ids, context=None):
+        invoice_ids = []
+        for rec in self.browse(cr, uid, ids, context=context):
+            finish_pension = rec.finish_edu
+            if finish_pension:
+                self.write(cr, uid, ids, {'state1':'paid'})
+        return True
+    
+    def sanction_education_loan(self,cr,uid,ids):
+        line_list = []
+        for rec in self.browse(cr,uid,ids):
+            course_id = rec.sws_education_id[0].course_name.id
+            date_start = rec.date_sanction
+            date_to = rec.date_sanction
+        search_list = self.pool.get('sws.scholar.sanction.criteria').search(cr,uid,[('active_is','=',True)])
+        if not saerch_list:
+            raise osv.except_osv(_('Warning!'), _('Please set criteria for this course first'))
+        browse_list = self.pool.get('sws.scholar.sanction.criteria').browse(cr,uid,search_list)
+        for values in browse_list:
+            for vals in values.criteria_line_id:
+                if vals.category_course.id == course_id:  ##  Fetching Records from Master Table 
+                    lines = vals.total_year
+                    amount_year = vals.amount_per_year
+                    total_amount = vals.amount_sanction
+        if lines and amount_year:
+            for i in range(lines):
+                #date_to = date_to + relativedelta.relativedelta(year=+1))
+                date_to = datetime.strptime(date_to,"%Y-%m-%d")+ relativedelta(years=1)
+                date_to = date_to.strftime("%Y-%m-%d")
+                line_list.append((0,0,{'year':i+1,'date_from':date_start,'date_to':date_to,'amount':amount_year,'state':'pending'}))
+                date_start = date_to
+                
+            self.write(cr,uid,ids,{'education_byyear':line_list,'amount_sanction':total_amount})
+        return False
+    
     def action_sanction(self, cr, uid, ids, context=None):
         invoice_ids = []
         transaction_list = []
@@ -638,8 +673,10 @@ class wakf_registration(osv.osv):
             journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
             ###############################################################################################
             date_today = date_today.strftime("%Y-%m-%d")
-            if date_sanction >= date_today:
-                self.pool.get('account.invoice').create(cr,uid,{'date_sanction':date_sanction,'head':head,'journal_type':'sale','type':'out_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})
+            #if date_sanction < date_today:
+            #    self.pool.get('account.invoice').create(cr,uid,{'date_sanction':date_sanction,'head':head,'journal_type':'sale','type':'out_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})
+            #transaction_list.append((0,0,{'date_sanction':date_sanction,'for_month':month,'year':year,'amount':price_unit,'status':'pending'}))
+            self.sanction_education_loan(cr,uid,ids)
             self.write(cr,uid,ids,{'state1':'sanctioned'})
         if rec.head.name == "Pension":
             ###########################################################################
@@ -654,12 +691,13 @@ class wakf_registration(osv.osv):
             journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
             ##############################################################################
             date_today = date_today.strftime("%Y-%m-%d")
-            if date_sanction >= date_today:
+            if date_sanction < date_today:
                 self.pool.get('account.invoice').create(cr,uid,{'date_sanction':date_sanction,'key':"pension",'head':head,'for_month':month,'year':year,'amount':price_unit,'journal_type':'purchase','type':'in_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})   
             transaction_list.append((0,0,{'date_sanction':date_sanction,'for_month':month,'year':year,'amount':price_unit,'status':'pending'}))
             #self.write(cr,uid,ids,{'state1':'sanctioned','history_transaction':transaction_list})
-            self.write(cr,uid,ids,{'state1':'sanctioned'})
-        else:
+            self.write(cr,uid,ids,{'state1':'sanctioned','history_transaction':transaction_list})
+        if not (rec.head.name == "Pension" or rec.category.name == "Education"):
+        #else:
             ###########################################################################
             search_ids = self.pool.get('account.account').search(cr,uid,[('name','=',"Accounts Payable")])
             if not search_ids:
@@ -672,12 +710,13 @@ class wakf_registration(osv.osv):
             journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
             ##############################################################################
             date_today = date_today.strftime("%Y-%m-%d")
-            if date_sanction >= date_today:
-                self.pool.get('account.invoice').create(cr,uid,{'date_sanction':date_sanction,'head':head,'for_month':month,'year':year,'amount':price_unit,'journal_type':'purchase','type':'in_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})   
+            if date_sanction <= date_today:
+                self.pool.get('account.invoice').create(cr,uid,{'date_sanction':date_sanction,'head':head,'for_month':month,'year':year,'amount':price_unit,'journal_type':'purchase','type':'in_invoice','is_sws':True,'is_assessment':False,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})   
             transaction_list.append((0,0,{'date_sanction':date_sanction,'for_month':month,'year':year,'amount':price_unit,'status':'pending'}))
             self.write(cr,uid,ids,{'state1':'sanctioned','history_transaction':transaction_list})
         return True
-  
+    
+    
  
     _columns = {
             #'name':fields.char('Wakf Name', size=128, required=False),
@@ -751,6 +790,7 @@ class wakf_registration(osv.osv):
             'sws_destitute_id':fields.one2many('sws.category.destitute','sws_id1','Destitute Details'),
             'sws_popup_id':fields.one2many('pop.up.cancel','sws_id1','POP up Details'),
             'history_transaction':fields.one2many('pension.disease.history','main_id','History of Trnsctn Details'),
+            'education_byyear':fields.one2many('education.loan.byyearp','education_loan_byyear_id','By year Trnsctn Details'),
             'popup_id': fields.many2one('pop.up.cancel', 'POPUP', required=False),
             'submitted_by': fields.many2one('res.users', 'Submitted by', readonly=True),
             'date_submitted': fields.datetime('Date Submitted', readonly=True),
@@ -780,12 +820,21 @@ class wakf_registration(osv.osv):
             'sanction_details':fields.char('Sanction Details',size=256),
             'date_sanction':fields.date('Starting Date'),
             'meeting_place':fields.char('Meeting Place'),
+            ##########################################################
             'finish_pension':fields.boolean('Stop Pension Cycle'),
             'reason': fields.selection([
                 ('death', 'Death'),
                 ('disqualify', 'Disqualified'),
                 ],'Reason', readonly=False),
             'date_death':fields.date('Date of Death'),
+            ##########################################################
+            'finish_edu':fields.boolean('Stop Loan'),
+            'reason_edu': fields.selection([
+                ('death', 'Death'),
+                ('disqualify', 'Disqualified'),
+                ],'Reason', readonly=False),
+            'date_death_edu':fields.date('Date of Cancellation'),
+             
             'course_end':fields.date('Course Ending Date'),
             'amount_balance':fields.float('Balance Amount'),
             'amount_received':fields.char('Amount Received'),

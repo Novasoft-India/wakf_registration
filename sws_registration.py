@@ -43,6 +43,61 @@ class sws_registration(osv.osv):
                 pension_line.append((0,0,{'date_sanction':today,'status':'pending','for_month':month,'year':year,'amount':amount}))
                 self.pool.get('res.partner').write(cr,uid,id_browse.id,{'state1':'revolving','history_transaction':pension_line})
         return True
+    
+    def action_edu_loan_days(self, cr, uid, automatic=False, use_new_cursor=False, context=None):
+        pension_line = []
+        invoice_ids = []
+        today = date.today()
+        today_copy = today
+        month = today.month
+        year = today.year
+        today = today.strftime("%Y-%m-%d")
+        id_search_all = self.pool.get('res.partner').search(cr,uid,[('state1','in',['sanctioned','revolving']),('head.name','=',"Education Loan")])
+        for id_browse in self.pool.get('res.partner').browse(cr,uid,id_search_all):
+            course_end = id_browse.course_end
+            if course_end <= today:
+                self.pool.get('res.partner').write(cr,uid,id_browse.id,{'state1':'re_payment'})    
+        id_search = self.pool.get('res.partner').search(cr,uid,[('state1','in',['sanctioned','revolving','re_payment']),('head.name','=',"Education Loan")])
+        for id_browse in self.pool.get('res.partner').browse(cr,uid,id_search):
+            head = id_browse.head.id
+            appli_no = id_browse.appli_no
+            output = id_browse.id
+            product = id_browse.category.id
+            action_line = []
+            for lines in id_browse.education_byyear:
+                if today >= lines.date_from and today < lines.date_to and lines.state == 'pending':
+                    invoice_ids = []
+                    line_id = lines.id
+                    date_from = lines.date_from
+                    date_to = lines.date_to
+                    amount = lines.amount
+                    price_unit = lines.amount
+                    new_amount = lines.amount
+                    ###############################################################################################
+                    search_ids = self.pool.get('account.account').search(cr,uid,[('name','=',"Accounts Receivable")])
+                    if not search_ids:
+                        raise osv.except_osv(_('Warning!'), _('Please create an account "Accounts Receivable" first'))
+                    account_id = self.pool.get('account.account').browse(cr,uid,search_ids)[0].id
+                    
+                    search_ids = self.pool.get('account.journal').search(cr,uid,[('name','=',"Assessment Journal")])
+                    if not search_ids:
+                        raise osv.except_osv(_('Warning!'), _('Please create "Assessment Journal" First'))
+                    journal_id = self.pool.get('account.journal').browse(cr,uid,search_ids)[0].id
+                    ###############################################################################################
+                    invoice_ids.append((0,0,{'product_id':product,'name':"Education Loan",'quantity':1,'price_unit':price_unit,'new_amount':new_amount,'sws':True}))
+                    self.pool.get('account.invoice').create(cr,uid,{'date_sanction':date_from,'head':head,'journal_type':'sale','type':'out_invoice','is_sws':True,'appli_no':appli_no,'account_id':account_id,'journal_id':journal_id,'partner_id':output,'invoice_line':invoice_ids})
+                    action_line.append((1,line_id,{'state':'collected'}))
+                    self.pool.get('res.partner').write(cr,uid,output,{'state1':'revolving','education_byyear':action_line})
+            ##############################################################################################################
+            ##############################################################################################################
+        id_search = self.pool.get('res.partner').search(cr,uid,[('state1','in',['re_payment','revolving']),('head.name','=',"Education Loan")])
+        for id_browse in self.pool.get('res.partner').browse(cr,uid,id_search):
+            list_find = [lines.state for lines in id_browse.education_byyear]
+            if list_find:
+                if list_find[-1] == 'returned':
+                    id_write = id_browse.id
+                    self.pool.get('res.partner').write(cr,uid,id_write,{'state1':'paid'},context=None)
+        return True
  
     _columns = {
             'appli_no':fields.char('Application Number:', size=64, required=True),
@@ -699,6 +754,26 @@ class pop_up_cancel(osv.osv):
                 
                 }
 pop_up_cancel()
+
+class education_loan_by_year(osv.osv):
+ 
+    _name = 'education.loan.byyearp'
+    _description = 'education.loan.byyear'
+    
+    _columns = {
+                'year':fields.integer('Year', required=False),
+                'date_from':fields.date('Date From', required=False),
+                'date_to':fields.date('Date To', required=False),
+                'amount':fields.float('Amount'),
+                'state': fields.selection([
+                    ('pending', 'Pending'),
+                    ('collected', 'Transfered'),
+                    ('returned', 'Returned'),
+                    ],'status', readonly=False), 
+                'education_loan_byyear_id':fields.many2one('res.partner','EDU LOAN YEAR',ondelete='set null'),
+                
+                }
+education_loan_by_year()
 
 #################################################################################################
 ###################################  UPDATES  ###################################################
