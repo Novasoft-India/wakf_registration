@@ -18,106 +18,104 @@ class wakf_registration(osv.osv):
     _order = "id desc"
     #_table = 'res_partner'
     
-    #===========================================================================
-    # def fields_view_get(self, cr, user, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
-    #     if context is None:
-    #         context = {}
-    #     #if (not view_id) and (view_type=='form') and context and context.get('force_email', False):
-    #     #    view_id = self.pool.get('ir.model.data').get_object_reference(cr, user, 'base', 'view_partner_simple_form')[1]
-    #     res = super(wakf_registration,self).fields_view_get(cr, user, view_id, view_type, context, toolbar=toolbar, submenu=submenu)
-    #     if view_type == 'form':
-    #         res['arch'] = self.fields_view_get_address(cr, user, res['arch'], context=context)
-    #      
-    #      
-    #     doc = etree.XML(res['arch'])
-    #      
-    #     if view_type == 'search':
-    #         if not context.get('default_supplier'):   ## Customer
-    #             for node in doc.xpath("//group[@name='extended filter']"):
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@string='Application Number']"):
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@string='Applicant Name']"):
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//group[@string='SWS - Filter By...']"):
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//group[@string='SWS - Group By...']"):
+    def fields_view_get(self, cr, user, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
+        if context is None:
+            context = {}
+        #if (not view_id) and (view_type=='form') and context and context.get('force_email', False):
+        #    view_id = self.pool.get('ir.model.data').get_object_reference(cr, user, 'base', 'view_partner_simple_form')[1]
+        res = super(wakf_registration,self).fields_view_get(cr, user, view_id, view_type, context, toolbar=toolbar, submenu=submenu)
+        if view_type == 'form':
+            res['arch'] = self.fields_view_get_address(cr, user, res['arch'], context=context)
+          
+          
+        doc = etree.XML(res['arch'])
+          
+        if view_type == 'search':
+            if not context.get('default_supplier'):   ## Customer
+                for node in doc.xpath("//group[@name='extended filter']"):
+                    doc.remove(node)
+                for node in doc.xpath("//field[@string='Application Number']"):
+                    doc.remove(node)
+                for node in doc.xpath("//field[@string='Applicant Name']"):
+                    doc.remove(node)
+                for node in doc.xpath("//group[@string='SWS - Filter By...']"):
+                    doc.remove(node)
+                for node in doc.xpath("//group[@string='SWS - Group By...']"):
+                   doc.remove(node)
+                for node in doc.xpath("//filter[@string='Companies']"):
+                    node.set('string', 'Wakf Office')
+                    doc.remove(node)
+                for node in doc.xpath("//filter[@string='Suppliers']"):
+                    doc.remove(node)
+            if context.get('default_supplier'):       ## Supplier
+                for node in doc.xpath("//field[@name='wakf_reg_no']"):
+                    doc.remove(node)
+                for node in doc.xpath("//field[@string='Wakf Name']"):
+                    doc.remove(node)
+                for node in doc.xpath("//group[@string='Location-Filter By...']"):
+                    doc.remove(node)
+                for node in doc.xpath("//filter[@string='Customers']"):
+                    doc.remove(node)
+                for node in doc.xpath("//filter[@string='Suppliers']"):
+                    node.set('string', 'Applicants')
+                for node in doc.xpath("//filter[@string='Companies']"):
+                    doc.remove(node)
+                  
+            res['arch'] = etree.tostring(doc)
+          
+        if view_type == 'tree':
+            if not context.get('default_supplier'):
+                for node in doc.xpath("//field[@name='appli_no']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='district_sws_id']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='email']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='appli_date']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='head']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='category']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='state1']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='amount_sanction']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+            if context.get('default_supplier'):
+                for node in doc.xpath("//field[@name='wakf_reg_no']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='district_id']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='email']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='type_id']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='wakf_registration_date']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='classification']"):
+                    node.set('invisible', 'True')
     #                doc.remove(node)
-    #             for node in doc.xpath("//filter[@string='Companies']"):
-    #                 node.set('string', 'Wakf Office')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//filter[@string='Suppliers']"):
-    #                 doc.remove(node)
-    #         if context.get('default_supplier'):       ## Supplier
-    #             for node in doc.xpath("//field[@name='wakf_reg_no']"):
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@string='Wakf Name']"):
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//group[@string='Location-Filter By...']"):
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//filter[@string='Customers']"):
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//filter[@string='Suppliers']"):
-    #                 node.set('string', 'Applicants')
-    #             for node in doc.xpath("//filter[@string='Companies']"):
-    #                 doc.remove(node)
-    #              
-    #         res['arch'] = etree.tostring(doc)
-    #      
-    #     if view_type == 'tree':
-    #         if not context.get('default_supplier'):
-    #             for node in doc.xpath("//field[@name='appli_no']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='district_sws_id']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='email']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='appli_date']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='head']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='category']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='state1']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='amount_sanction']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #         if context.get('default_supplier'):
-    #             for node in doc.xpath("//field[@name='wakf_reg_no']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='district_id']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='email']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='type_id']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='wakf_registration_date']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='classification']"):
-    #                 node.set('invisible', 'True')
-    # #                doc.remove(node)
-    #             for node in doc.xpath("//field[@name='taluk_id']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #             for node in doc.xpath("//field[@name='village_id']"):
-    #                 node.set('invisible', 'True')
-    #                 doc.remove(node)
-    #         res['arch'] = etree.tostring(doc)
-    #     return res
-    #===========================================================================
+                for node in doc.xpath("//field[@name='taluk_id']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+                for node in doc.xpath("//field[@name='village_id']"):
+                    node.set('invisible', 'True')
+                    doc.remove(node)
+            res['arch'] = etree.tostring(doc)
+        return res
     
     def on_change_wakf_village_to_taluk(self, cr, uid, ids, village_id, context=None):
         values = {}
