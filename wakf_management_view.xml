@@ -65,7 +65,6 @@
                 <field name="view_id" ref="wakf_management_tree_view"/>
             </record>
 
-			<menuitem id="wakf_management_menu" name="Management Details" parent="base.menu_sales" action="action_wakf_management_tree_view"/>
 
     
     </data>

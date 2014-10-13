@@ -88,7 +88,6 @@
                 <field name="view_id" ref="wakf_immovable_property_tree_view"/>
             </record>
 
-			<menuitem id="wakf_immovable_property_menu" name="Immovable Property" parent="base.menu_sales" action="action_wakf_immovable_property_tree_view"/>
 
     
     </data>
