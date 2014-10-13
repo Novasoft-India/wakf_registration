@@ -42,7 +42,6 @@
             </record>
 
 
-            <menuitem id="wakf_type_menu" name="Wakf Type" parent="base.menu_sales" action="action_wakf_type_tree_view"/>
     
     
     

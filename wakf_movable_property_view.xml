@@ -66,7 +66,6 @@
                 <field name="view_id" ref="wakf_movable_property_tree_view"/>
             </record>
 
-			<menuitem id="wakf_movable_property_menu" name="Movable Property" parent="base.menu_sales" action="action_wakf_movable_property_tree_view"/>
 
        
     

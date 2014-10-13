@@ -141,22 +141,45 @@
 			</p>
 			</field>
 		</record>
+		
+		
 		<!-- ====================================== SWS Action Menus ======================================= -->		
-			<menuitem id="sws_main_menu" name="SWS" parent=""/>	
+			<menuitem id="sws_main_menu" name="SWS" parent="" groups="wakf_registration.group_sws_submit"/>	
 		
 	
 		<!-- ======================================  Sub Menus ======================================= -->		
 			<menuitem id="sws_sub_head" name="SWS Registration" parent="sws_main_menu"/>
+			<menuitem id="sws_sub_criteria" name="SWS Criteria" parent="sws_main_menu"/>
+			<menuitem id="sws_sub_scholarship" name="Scholarship Criteria" parent="sws_main_menu"/>
 			
+		<!-- ====================================== Registration Action Menus ======================================= -->		
+			<menuitem id="registration_main_menu" name="Waqf Registration" parent="" groups="wakf_registration.group_wakf_registration"/>	
 		
+	
+		<!-- ======================================  Registration Sub Menus ======================================= -->		
+			<menuitem id="registration_form" name="Registration" parent="registration_main_menu"/>
+			<menuitem id="registration_location" name="Location" parent="registration_main_menu"/>
+			<menuitem id="registration_other" name="Others" parent="registration_main_menu"/>	
+			
+				
 	   <!-- ====================================== SWS Action Menus ======================================= -->		
 			<menuitem id="sws_registration" name="Registration" parent="sws_sub_head" sequence="1" action="action_partner_supplier_form_demo"/>
-			<menuitem id="sws_criteria_menu" name="SWS Criteria" parent="sws_sub_head" sequence="2" action="action_sws_criteria_tree_view"/> 
-			<menuitem id="sws_scholar_criteria_menu" name="SWS Scholarship Criteria" parent="sws_sub_head" sequence="3" action="action_sws_scholar_criteria_tree_view"/>
-			<menuitem id="sws_scholar_sanction_criteria_menu" name="Scholarship Sanction Criteria" parent="sws_sub_head" sequence="4" action="action_sws_scholar_sanction_criteria_tree_view"/>
+			<menuitem id="sws_criteria_menu" name="SWS Criteria" parent="sws_sub_criteria" sequence="2" action="action_sws_criteria_tree_view"/> 
+			<menuitem id="sws_scholar_criteria_menu" name="SWS Scholarship Criteria" parent="sws_sub_scholarship" sequence="3" action="action_sws_scholar_criteria_tree_view"/>
+			<menuitem id="sws_scholar_sanction_criteria_menu" name="Scholarship Sanction Criteria" parent="sws_sub_scholarship" sequence="4" action="action_sws_scholar_sanction_criteria_tree_view"/>
     		<menuitem id="pensioncycle_menu" name="Pension Cycle" parent="sws_sub_head" sequence="5" action="action_pensioncycle_tree_view"/>
-    	<!-- =======================================  Scheduler ================================================== -->	
+    	
+    	<!-- =======================================  Registration Menus ================================================== -->	
     		
+			<menuitem id="waqf_registration" name="Registration" parent="registration_form" sequence="1" action="action_partner_customer_form"/>
+			<menuitem id="wakf_district_menu" name="Districts" parent="registration_location" action="action_wakf_district_tree_view"/>
+            <menuitem id="wakf_taluk_menu" name="Taluks" parent="registration_location" action="action_wakf_taluk_tree_view"/>
+            <menuitem id="wakf_village_menu" name="Village" parent="registration_location" action="action_wakf_village_tree_view"/>
+			<menuitem id="wakf_immovable_property_menu" name="Immovable Property" parent="registration_other" action="action_wakf_immovable_property_tree_view"/>
+			<menuitem id="wakf_movable_property_menu" name="Movable Property" parent="registration_other" action="action_wakf_movable_property_tree_view"/>
+			<menuitem id="wakf_management_menu" name="Management Details" parent="registration_other" action="action_wakf_management_tree_view"/>
+            <menuitem id="wakf_type_menu" name="Wakf Type" parent="registration_other" action="action_wakf_type_tree_view"/>
+    		  
     		  <!--  
     		<record forcecreate="True" id="ir_cron_pension_fine_action" model="ir.cron">
 			  <field name="name">Run Pension Scheduler</field>
@@ -170,7 +193,18 @@
 			  <field eval="'()'" name="args" />
 			</record> 
     
-    -->
     
+    		<record forcecreate="True" id="ir_cron_education_loan_action" model="ir.cron">
+			  <field name="name">Run Education Loan Scheduler</field>
+			  <field eval="True" name="active" />
+			  <field name="user_id" ref="base.user_root" />
+			  <field name="interval_number">1</field>
+			  <field name="interval_type">minutes</field>
+			  <field name="numbercall">-1</field>
+			  <field eval="'sws.registration'" name="model" />
+			  <field eval="'action_edu_loan_days'" name="function" />
+			  <field eval="'()'" name="args" />
+			 </record>
+    -->
     </data>
 </openerp>

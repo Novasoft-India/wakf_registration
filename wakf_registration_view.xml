@@ -33,7 +33,7 @@
     
     	  		<xpath expr="//form[@string='Partners']/sheet" position="before">
     				<header>
-                    	<button name="action_submit" string="Submit" type="object" groups="wakf_registration.group_sws_submit" icon="gtk-go-forward" attrs="{'invisible':['|',('state1','in',('submitted','verified','approved','sanctioned','rejected','re_payment','paid')),('is_person', '!=', True)]}"/>
+                    	<button name="action_submit" string="Submit" type="object" groups="wakf_registration.group_sws_submit" icon="gtk-go-forward" attrs="{'invisible':['|',('state1','in',('submitted','verified','approved','sanctioned','revolving','finished','rejected','re_payment','paid')),('is_person', '!=', True)]}"/>
                     	<button name="action_verify1" string="Verify" type="object" groups="wakf_registration.group_sws_submit" icon="gtk-go-forward" attrs="{'invisible':['|',('state1','!=','submitted'),('is_person', '!=', True)]}"/>
                 		<button name="action_approve1" string="Approve" type="object" groups="wakf_registration.group_sws_submit" icon="gtk-go-forward" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'verified')]}"/>
                 		<button name="action_sanction" string="Sanction" type="object" groups="wakf_registration.group_sws_sanction" icon="gtk-go-forward" attrs="{'invisible':['|',('is_person', '!=', True),('state1', '!=', 'approved')]}"/>
@@ -90,27 +90,27 @@
                  
                  <xpath expr="//form[@string='Partners']/sheet/group" position="inside">
                      			<group attrs="{'invisible':['|',('is_wakf', '=', True),('is_person', '!=', True)]}">
-			                        <field name="appli_no" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
-			                        <field name="head" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}" options="{'limit': 15, 'create': false, 'create_edit': false}"  on_change="on_change_category(head)"/>
+			                        <field name="appli_no" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid','revolving','finished'])]}"/>
+			                        <field name="head" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid','revolving','finished'])]}" options="{'limit': 15, 'create': false, 'create_edit': false}"  on_change="on_change_category(head)"/>
 			                        
-			                        <field name="category" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}" domain="[('categ_id','=',head)]" options="{'limit': 25, 'create': false, 'create_edit': false}"/>
-			                        <field name="appli_date" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
-			                        <field name="full_name" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
-			                        <field name="address" attrs="{'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
+			                        <field name="category" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid','revolving','finished'])]}" domain="[('categ_id','=',head)]" options="{'limit': 25, 'create': false, 'create_edit': false}"/>
+			                        <field name="appli_date" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid','revolving','finished'])]}"/>
+			                        <field name="full_name" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid','revolving','finished'])]}"/>
+			                        <field name="address" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid','revolving','finished'])]}"/>
 			                        <field name="tick_same" on_change="on_change_tick_same(tick_same,address)"/>
 			                        <field name="comm_address"/>
 			                        <field name="categ_name" invisible="1"/>
                         
                        			</group>
                        			<group attrs="{'invisible':['|',('is_wakf', '=', True),('is_person', '!=', True)]}">
-			                        <field name="village" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
-			                        <field name="panchayath" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
-			                        <field name="taluk_id" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid'])]}"/>
-			                        <field name="district_sws_id" attrs="{'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}"/>
-			                        <field name="reg_no" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['verified','approved','sanctioned','rejected'])]}" on_change="on_change_wakf_regno_to_name(reg_no)"/>
-			                        <field name="wakf_id" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['submitted','verified','approved','sanctioned','rejected'])]}" on_change="on_change_wakf_name1_to_regno(wakf_id)"/>
-			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected'])]}" name="meeting_place"/>
-			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned']),('categ_name','=','Education Loan')],'invisible':['|',('state1','not in',['verified','approved','sanctioned']),('categ_name','!=','Education Loan')],'readonly':[('state1','in',['approved','sanctioned','rejected'])]}" name="course_end"/>
+			                        <field name="village" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid','revolving','finished'])]}"/>
+			                        <field name="panchayath" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid','revolving','finished'])]}"/>
+			                        <field name="taluk_id" attrs="{'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid','revolving','finished'])]}"/>
+			                        <field name="district_sws_id" attrs="{'readonly':[('state1','in',['verified','approved','sanctioned','rejected','revolving','paid','re_payment','finished'])]}"/>
+			                        <field name="reg_no" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid','revolving','finished'])]}" on_change="on_change_wakf_regno_to_name(reg_no)"/>
+			                        <field name="wakf_id" attrs="{'required':[('state1','in',['submitted','verified','cancelled','approved','sanctioned'])],'readonly':[('state1','in',['approved','sanctioned','rejected','re_payment','paid','revolving','finished'])]}" on_change="on_change_wakf_name1_to_regno(wakf_id)"/>
+			                        <field attrs="{'required':[('state1','in',['verified','approved','sanctioned'])],'readonly':[('state1','in',['sanctioned','rejected','re_payment','paid','revolving','finished'])]}" name="meeting_place"/>
+			                        <field attrs="{'required':[('state1','in',['approved','sanctioned']),('categ_name','=','Education Loan')],'invisible':['|',('state1','not in',['approved','sanctioned','revolving','re_payment','finished','paid']),('categ_name','!=','Education Loan')],'readonly':[('state1','in',['sanctioned','rejected','re_payment','paid','revolving','finished'])]}" name="course_end"/>
 			                        
                        			</group>
                        			<group  attrs="{'invisible':['|',('is_person', '!=', True),('state1', 'not in',['approved','sanctioned','re_payment','paid','revolving','finished'])]}" string="Sanction Details">
@@ -122,8 +122,16 @@
                        				<field attrs="{'readonly':[('state1','in',['paid','finished'])]}" name="finish_pension"/>
                        				<field name="reason" attrs="{'readonly':[('state1','in',['rejected','re_payment','paid','finished'])]}"/>
                        				<field name="date_death" attrs="{'readonly':[('state1','in',['rejected','re_payment','paid','finished'])]}"/>
-                       				<button name="action_stop_pension" string="Stop Pension" type="object" icon="gtk-goto-last"/>
+                       				<button name="action_stop_pension" string="Stop Loan" type="object" icon="gtk-goto-last"/>
                        			</group>
+                       			
+                       			<group  attrs="{'invisible':['|','|',('categ_name','!=','Education Loan'),('is_person', '!=', True),('state1', 'not in',['sanctioned','re_payment','paid','revolving','finished'])]}" string="Finish Loan">
+                       				<field attrs="{'readonly':[('state1','in',['paid','finished'])]}" name="finish_edu"/>
+                       				<field name="reason_edu" attrs="{'readonly':[('state1','in',['rejected','re_payment','paid','finished'])]}"/>
+                       				<field name="date_death_edu" attrs="{'readonly':[('state1','in',['rejected','re_payment','paid','finished'])]}"/>
+                       				<button name="action_stop_education" string="Stop Loan" type="object" icon="gtk-goto-last"/>
+                       			</group>
+                       			
                        			<!--  
                        			<group  attrs="{'invisible':['|',('is_person', '!=', True),('state1', 'not in',['re_payment','paid','revolving','finished'])]}" string="Return Details">
                        				<field attrs="{'readonly':[('state1','in',['re_payment','paid','finished','revolving'])]}" name="amount_balance"/>
@@ -506,7 +514,7 @@
                         		
                         		</field>
                         	</page>
-                        	<page string="Previous Transactions" attrs="{'invisible':[('state1', '!=', 'sanctioned'),('is_wakf', '=', True),('categ_name','!=','Pension')]}">
+                        	<page string="Previous Transactions" attrs="{'invisible':['|',('is_wakf', '=', True),('categ_name','!=','Pension')]}">
                         		<field name="history_transaction" nolabel="1" edit="False" delete="False">
                         			<tree string="Transactions">	    
 					                        <field name="year"/>
@@ -520,7 +528,19 @@
                         		
                         		</field>
                         	</page>
-                        	
+                        	<page string="Loan By Year" attrs="{'invisible':['|',('is_wakf', '=', True),('categ_name','!=','Education Loan')]}">
+                        		<field name="education_byyear" nolabel="1">
+                        			<tree string="By Year">	    
+					                        <field name="year"/>
+					                        <field name="date_from"/>
+					                        <field name="date_to"/>
+					                        <field name="amount" sum="Total Amount"/>
+					                        <field name="state"/>
+
+                        			</tree>
+                        		
+                        		</field>
+                        	</page>
                         	
                     </xpath> 
               <!--        </notebook>-->
@@ -619,40 +639,7 @@
   				<!-- ############################# UPDATES ############################### -->
   			</field>
   			</record>
-  		<!-- ==============================  Supplier Tree View inherit ================================== 	
-  			<record id="view_res_partner_tree_supplier" model="ir.ui.view">
-  			<field name="name">res.partner.tree.supplier</field>
-  			<field name="model">res.partner</field>
-  			<field name="inherit_id" ref="base.view_partner_tree" />
-  			<field name="arch" type="xml">
-  			 	<xpath expr="//tree/field[@name='phone']" position="replace"/>
-  				
-  				<xpath expr="//tree/field[@name='email']" position="replace"/>
-  					
-  				<xpath expr="//tree" position="inside">
-  					<field name="appli_date"/>
-  					<field name="full_name"/>
-  					<field name="head"/>
-  					<field name="category"/>
-  					<field name="reg_no"/>
-  					<field name="state1"/>
-  				</xpath>
-  			
-  			</field>
-  			</record>-->
-  			<!--  
-  			<record model="ir.cron" id="resource_panelty_cron">
-            <field name="name">Resource Panelty Count</field>
-            <field name="interval_number">1</field>
-            <field name="interval_type">minutes</field>
-            <field name="numbercall">-1</field>
-            <field eval="False" name="doall"/>
-            <field eval="'sws.registration'" name="model"/>
-            <field eval="'action_scheduler'" name="function"/>
-            <field eval="'()'" name="args"/>
-        	</record>
-			-->
-
+  		
 	</data>
 </openerp>
 
